@@ -14,11 +14,11 @@ python -m arcade.examples.view_pause_screen
 import arcade
 import os
 
-
+# nada importante por el momento
 file_path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(file_path)
 
-
+# vista de pantalla
 WIDTH = 800
 HEIGHT = 600
 SPRITE_SCALING = 0.5
@@ -41,6 +41,7 @@ class MenuView(arcade.View):
 
 
 class GameView(arcade.View):
+
     def __init__(self):
         super().__init__()
         self.player_sprite = arcade.Sprite(":resources:images/animated_characters/female_person/femalePerson_idle.png", SPRITE_SCALING)
@@ -69,21 +70,26 @@ class GameView(arcade.View):
         self.player_sprite.update()
 
         # Bounce off the edges
+        # los rebotes de pantalla
         if self.player_sprite.left < 0 or self.player_sprite.right > WIDTH:
             self.player_sprite.change_x *= -1
         if self.player_sprite.bottom < 0 or self.player_sprite.top > HEIGHT:
             self.player_sprite.change_y *= -1
 
     def on_key_press(self, key, _modifiers):
+
+        # para ver si la pantalla de pausa si la persona presiona escape
         if key == arcade.key.ESCAPE:
             # pass self, the current view, to preserve this view's state
-            pause = PauseView(self)
+            pause = PauseView(self) # introduce el argumento clase
             self.window.show_view(pause)
 
 
 class PauseView(arcade.View):
     def __init__(self, game_view):
         super().__init__()
+
+        # fijate que este si recibe como argumento una clase
         self.game_view = game_view
 
     def on_show(self):
@@ -95,6 +101,8 @@ class PauseView(arcade.View):
         # Draw player, for effect, on pause screen.
         # The previous View (GameView) was passed in
         # and saved in self.game_view.
+        # ojo self.game_view es una variable clase . la que se paso con argumento y este a su vez tiene una instancia de player_sprite (el jugador) . aca hay un guardado
+        # se guarda el estado del jugador
         player_sprite = self.game_view.player_sprite
         player_sprite.draw()
 
@@ -123,10 +131,11 @@ class PauseView(arcade.View):
                          anchor_x="center")
 
     def on_key_press(self, key, _modifiers):
+        # si presiona escape o enter
         if key == arcade.key.ESCAPE:   # resume game
-            self.window.show_view(self.game_view)
+            self.window.show_view(self.game_view) # se regresa al juego con el estado que se quedo
         elif key == arcade.key.ENTER:  # reset game
-            game = GameView()
+            game = GameView() # se crea un nuevo estado y se pasa a un nuevo juego
             self.window.show_view(game)
 
 

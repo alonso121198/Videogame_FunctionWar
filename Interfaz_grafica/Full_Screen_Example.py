@@ -34,6 +34,7 @@ class MyGame(arcade.Window):
         """
         # Open a window in full screen mode. Remove fullscreen=True if
         # you don't want to start this way.
+        # fijate el ultimo argumento es para que se vea toda la ventana
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, fullscreen=True)
 
         # Set the working directory (where we expect to find files) to the same
@@ -46,10 +47,10 @@ class MyGame(arcade.Window):
         # This will get the size of the window, and set the viewport to match.
         # So if the window is 1000x1000, then so will our viewport. If
         # you want something different, then use those coordinates instead.
-        width, height = self.get_size()
-        self.set_viewport(0, width, 0, height)
-        arcade.set_background_color(arcade.color.AMAZON)
-        self.example_image = arcade.load_texture(":resources:images/tiles/boxCrate_double.png")
+        width, height = self.get_size() # da el tamaño de la pantalla
+        self.set_viewport(0, width, 0, height) # establece el tamaño de la vista
+        arcade.set_background_color(arcade.color.AMAZON) # el fondo
+        self.example_image = arcade.load_texture(":resources:images/tiles/boxCrate_double.png") # la textura de las cajas
 
     def on_draw(self):
         """
@@ -77,15 +78,19 @@ class MyGame(arcade.Window):
             height = 128
             arcade.draw_texture_rectangle(x, y, width, height, self.example_image)
 
+    # he de recordar que estos cambios de "S" y "f" se dan en el cambio de letra . El full screen hace agrandar la pantalla pero disminuye la calidad ssssS
+    # para que veas la diferencia fijate en los bloques de madera . alli veras el cambio y entender
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
         if key == arcade.key.F:
             # User hits f. Flip between full and not full screen.
-            self.set_fullscreen(not self.fullscreen)
+            self.set_fullscreen(not self.fullscreen) # el la pantalla completa se anula
 
             # Get the window coordinates. Match viewport to window coordinates
             # so there is a one-to-one mapping.
-            width, height = self.get_size()
+
+            # se mapea uno a uno , es decir todo la vista es completa , de todo
+            width, height = self.get_size()  # se establece una nueva medida fas
             self.set_viewport(0, width, 0, height)
 
         if key == arcade.key.S:
@@ -105,4 +110,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()sfs
+    main()

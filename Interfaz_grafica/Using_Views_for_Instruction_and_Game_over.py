@@ -22,20 +22,23 @@ import arcade
 import random
 import os
 
-
+# estos comandos solo son para que alguien externo pueda ejecutarlo de manera facil desde la terminal
 file_path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(file_path)
 
-
+# tamaño de la pantalla y escala de la imagen
 WIDTH = 800
 HEIGHT = 600
 SPRITE_SCALING = 0.5
 
 
 class MenuView(arcade.View):
+
+    # llamamlo cuando quieras cambiar el fondo de pantalla . llamalo para la vista
     def on_show(self):
         arcade.set_background_color(arcade.color.WHITE)
 
+    # comienza el dibujado de las palabras iniciales
     def on_draw(self):
         arcade.start_render()
         arcade.draw_text("Menu Screen", WIDTH/2, HEIGHT/2,
@@ -43,15 +46,23 @@ class MenuView(arcade.View):
         arcade.draw_text("Click to advance", WIDTH/2, HEIGHT/2-75,
                          arcade.color.GRAY, font_size=20, anchor_x="center")
 
+    # cuando se es presionado el boton
     def on_mouse_press(self, _x, _y, _button, _modifiers):
+        # define el objeto insturcciones
         instructions_view = InstructionView()
+        # fijate que self.windows es una variable de instancia (que es un objeto a su vez , una componente) y el .show_view() es su metodo
+        # lo que hace es mostrar la vista actual
         self.window.show_view(instructions_view)
 
-
+# munu de instrucciones
 class InstructionView(arcade.View):
+
+
+    # establece el color del juego
     def on_show(self):
         arcade.set_background_color(arcade.color.ORANGE_PEEL)
 
+    # dibuja el mensaje
     def on_draw(self):
         arcade.start_render()
         arcade.draw_text("Instructions Screen", WIDTH/2, HEIGHT/2,
@@ -59,15 +70,21 @@ class InstructionView(arcade.View):
         arcade.draw_text("Click to advance", WIDTH/2, HEIGHT/2-75,
                          arcade.color.GRAY, font_size=20, anchor_x="center")
 
+    # que pasa si se presiona
     def on_mouse_press(self, _x, _y, _button, _modifiers):
+        # se llama a la funcion GameWiew
         game_view = GameView()
+        # fijate que self.windows es una variable de instancia (que es un objeto a su vez , una componente) y el .show_view() es su metodo
+        # lo que hace es mostrar la vista actual
         self.window.show_view(game_view)
 
-
+    # Se inicializa el juego , Fijate que no se uso arcade.Windows lo cual es extraño , habra que aprender mas acerca de esto
 class GameView(arcade.View):
+
+
     def __init__(self):
         super().__init__()
-
+        # tiempo tomado para el juego
         self.time_taken = 0
 
         # Sprite lists
@@ -81,6 +98,7 @@ class GameView(arcade.View):
         self.player_sprite.center_y = 50
         self.player_list.append(self.player_sprite)
 
+        # monedas
         for i in range(5):
 
             # Create the coin instance
@@ -93,12 +111,16 @@ class GameView(arcade.View):
             # Add the coin to the lists
             self.coin_list.append(coin)
 
+    # color de
     def on_show(self):
         arcade.set_background_color(arcade.color.AMAZON)
 
         # Don't show the mouse cursor
+        # no se vea el cursor . Fijate como usa window aca
         self.window.set_mouse_visible(False)
 
+
+    # dibujo
     def on_draw(self):
         arcade.start_render()
         # Draw all the sprites.
@@ -112,6 +134,7 @@ class GameView(arcade.View):
         arcade.draw_text(output_total, 10, 10, arcade.color.WHITE, 14)
 
     def on_update(self, delta_time):
+        # actualizas el tiempo cada vez que avanza la actualizacion
         self.time_taken += delta_time
 
         # Call update on all sprites (The sprites don't do much in this
@@ -131,10 +154,16 @@ class GameView(arcade.View):
 
         # If we've collected all the games, then move to a "GAME_OVER"
         # state.
+        # si recupero todas las monedas entonces
         if len(self.coin_list) == 0:
+
+            # llamas la funcion GameOverView()
             game_over_view = GameOverView()
+            #  el tiempo final que transcurrio
             game_over_view.time_taken = self.time_taken
+            # Para que se vea de nuevo el cursor
             self.window.set_mouse_visible(True)
+            # LLama a la siguiente pantalla de game_over
             self.window.show_view(game_over_view)
 
     def on_mouse_motion(self, x, y, _dx, _dy):
@@ -151,6 +180,7 @@ class GameOverView(arcade.View):
         self.time_taken = 0
 
     def on_show(self):
+        # el color de juego perdido
         arcade.set_background_color(arcade.color.BLACK)
 
     def on_draw(self):
@@ -162,6 +192,7 @@ class GameOverView(arcade.View):
         arcade.draw_text("Click to restart", 310, 300, arcade.color.WHITE, 24)
 
         time_taken_formatted = f"{round(self.time_taken, 2)} seconds"
+        # dibuja cuanto tiempo duro el juego
         arcade.draw_text(f"Time taken: {time_taken_formatted}",
                          WIDTH/2,
                          200,
@@ -174,10 +205,12 @@ class GameOverView(arcade.View):
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         game_view = GameView()
+        # para que el juego vuelva a verse de nuevo .
         self.window.show_view(game_view)
 
 
 def main():
+    # fijate que arcade.Window es la cabeza de todo es como alli se plazma todo lo que hacen otras clases hijos de arcade.View
     window = arcade.Window(WIDTH, HEIGHT, "Different Views Example")
     window.total_score = 0
     menu_view = MenuView()

@@ -2,9 +2,10 @@ from arcade.gui import *
 
 import os
 
-
+# esto es el boton de TextButton
 class PlayButton(TextButton):
     def __init__(self, game, x=0, y=0, width=100, height=40, text="Play", theme=None):
+        # fijate lo que hereda .
         super().__init__(x, y, width, height, text, theme=theme)
         self.game = game
 
@@ -56,30 +57,37 @@ class MyGame(arcade.Window):
         hover = ":resources:gui_themes/Fantasy/Buttons/Hover.png"
         clicked = ":resources:gui_themes/Fantasy/Buttons/Clicked.png"
         locked = ":resources:gui_themes/Fantasy/Buttons/Locked.png"
+        # fijate , esto por ahora para mi es desconocido
         self.theme.add_button_textures(normal, hover, clicked, locked)
 
     def setup_theme(self):
+        # donde se definio la funcion theme ?
         self.theme = Theme()
-        self.theme.set_font(24, arcade.color.WHITE)
-        self.set_button_textures()
+        self.theme.set_font(24, arcade.color.WHITE) # establecer la fuente de los textos
+        self.set_button_textures() # metodo anterior
 
     def set_buttons(self):
+
         self.button_list.append(PlayButton(self, 60, 570, 110, 50, theme=self.theme))
         self.button_list.append(PauseButton(self, 60, 515, 110, 50, theme=self.theme))
 
     def setup(self):
+        # para estableces los temas y los botones de los metodos antes definidos
         self.setup_theme()
         self.set_buttons()
 
     def on_draw(self):
         arcade.start_render()
+        # dibuja todo lo heredado
         super().on_draw()
+        # dibuja self.text con los detalles
         arcade.draw_text(self.text, self.text_x, self.text_y, arcade.color.ALICE_BLUE, self.text_font_size)
 
     def update(self, delta_time):
+        # retorna nulo
         if self.pause:
             return
-
+        # para que rebote el texto
         if self.text_x < 0 or self.text_x > self.width:
             self.speed = -self.speed
         self.text_x += self.speed
