@@ -13,6 +13,7 @@ class PlayButton(TextButton):
         self.pressed = True
 
     def on_release(self):
+
         if self.pressed:
             self.game.pause = False
             self.pressed = False
@@ -57,12 +58,13 @@ class MyGame(arcade.Window):
         hover = ":resources:gui_themes/Fantasy/Buttons/Hover.png"
         clicked = ":resources:gui_themes/Fantasy/Buttons/Clicked.png"
         locked = ":resources:gui_themes/Fantasy/Buttons/Locked.png"
-        # fijate , esto por ahora para mi es desconocido
+        # fijate , self theme es un objeto , pero que tipo de objeto ?
         self.theme.add_button_textures(normal, hover, clicked, locked)
 
     def setup_theme(self):
         # donde se definio la funcion theme ?
-        self.theme = Theme()
+        # # esto viene de from arcade.gui import * (OJO)
+        self.theme = Theme() # y para ser exacto en la documentacion viene de arcade.Theme
         self.theme.set_font(24, arcade.color.WHITE) # establecer la fuente de los textos
         self.set_button_textures() # metodo anterior
 
@@ -73,13 +75,14 @@ class MyGame(arcade.Window):
 
     def setup(self):
         # para estableces los temas y los botones de los metodos antes definidos
+        print("hola usuario")
         self.setup_theme()
         self.set_buttons()
 
     def on_draw(self):
         arcade.start_render()
         # dibuja todo lo heredado
-        super().on_draw()
+        super().on_draw() # con esto traes todas las opciones de botones , osea el dibujado
         # dibuja self.text con los detalles
         arcade.draw_text(self.text, self.text_x, self.text_y, arcade.color.ALICE_BLUE, self.text_font_size)
 

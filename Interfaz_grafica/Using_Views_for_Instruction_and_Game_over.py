@@ -36,10 +36,13 @@ class MenuView(arcade.View):
 
     # llamamlo cuando quieras cambiar el fondo de pantalla . llamalo para la vista
     def on_show(self):
+
         arcade.set_background_color(arcade.color.WHITE)
+
 
     # comienza el dibujado de las palabras iniciales
     def on_draw(self):
+
         arcade.start_render()
         arcade.draw_text("Menu Screen", WIDTH/2, HEIGHT/2,
                          arcade.color.BLACK, font_size=50, anchor_x="center")
@@ -52,7 +55,7 @@ class MenuView(arcade.View):
         instructions_view = InstructionView()
         # fijate que self.windows es una variable de instancia (que es un objeto a su vez , una componente) y el .show_view() es su metodo
         # lo que hace es mostrar la vista actual
-        self.window.show_view(instructions_view)
+        self.window.show_view(instructions_view) # nose como este metodo puede funcionar
 
 # munu de instrucciones
 class InstructionView(arcade.View):
