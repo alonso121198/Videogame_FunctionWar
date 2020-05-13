@@ -9,8 +9,11 @@ SPRITE_SCALING_LASER = 0.8
 SPRITE_SCALING_BOX = 0.5
 COIN_COUNT = 25
 
-SCREEN_WIDTH = 1000
-SCREEN_HEIGHT = 800
+
+SIZE_WALL = 64 # ESTE ES EL TAMAÑO DE MI BLOQUE . 128*0.5 (OJO)
+
+SCREEN_WIDTH = 20*SIZE_WALL # PARA QUE ENCAJE UN NUMEOR ENTERO DE PAREDES , IMPORTANTE
+SCREEN_HEIGHT =  13*SIZE_WALL # PARA QUE ENCAJE UN NUMEOR ENTERO DE PAREDES , IMPORTANTE
 
 BULLET_SPEED_X = 4
 BULLET_SPEED_Y = 4
@@ -26,76 +29,11 @@ MOVEMENT_SPEED = 5  # la velocidad de movimiento de mi personaje
 # osea para que vea 40 pixeles a su borde antes de que se mueva mas a ese borde .
 VIEWPORT_MARGIN = 40  # El margen
 
+# ----------------------------------------------- ARMAS -------------------------------------------------------
 
 
-# ----------------------------------------------- OBJETOS-------------------------------------------------------
-
-
-
-###################### JUGADOR ###########################
-
-class Player(arcade.Sprite):
-
-    # funcion lineal
-    def shoot_lineal(self,escala,argu):
-        pass
-
-
-
-    # disparo sinoidal o cosenoidal
-    def shoot_sinoidal(self,escala,argu):
-        pass
-
-    # disparo_logaritmico
-    def shoot_log(self,escala,argu):
-        pass
-
-
-    # diparo_logaritmico
-    def shoot_exp(self,escala,argu):
-        pass
-
-
-    # disparo_algebraico
-    def shoot_alge(self,escala,argu):
-        pass
-
-    # disparo superpoderoso
-    def shoot_tan(self,escala,argu):
-        pass
-
-
-    # barrera_campana
-    def shoot_campana(self,escala,argu):
-        pass
-
-
-
-
-    def update(self):
-        pass
-
-
-
-
-
-###################### ENEMIGO 1 ###########################
-
-class Enemy1(arcade.Sprite):
-    # enemigo principal , habra mas de esto pero por ahora solo sera un enemigo simple
-    pass
-
-
-###################### JEFE FINAL ###########################
-
-class FinalBoss(arcade.Sprite):
-    # La inteligencia de este enemigo sera dificil de programar pero con fe puedo programarlo
-    pass
-
-
-###################### BALA ###########################
-
-class Bullet(arcade.Sprite):
+# disparo lineal
+class Shoot_lineal(arcade.Sprite):
 
     # es necesario ponerlo de esa forma , ya que llamamos al padre de esa forma , con esos dos argumentos (podriamos poner mas) habra que probar todos los resultados
     def __init__(self, filename, scale):
@@ -129,6 +67,252 @@ class Bullet(arcade.Sprite):
         self.angle = math.degrees(angulo_radians)
 
 
+# Disparo sinoidal
+class Shoot_sinoidal(arcade.Sprite):
+
+    # es necesario ponerlo de esa forma , ya que llamamos al padre de esa forma , con esos dos argumentos (podriamos poner mas) habra que probar todos los resultados
+    def __init__(self, filename, scale):
+        super().__init__(filename, scale)
+
+        # su propio tiempo inicia
+
+        self.time = 0
+        # conviene ponerlos alli , esto se hara una vez .
+        self.inicio_x = 0
+        self.inicio_y = 0
+
+        # sera la division , me servira para sacar el angulo
+        self.division = 0
+
+    def setup(self):
+        self.inicio_x = self.center_x
+        self.inicio_y = self.center_y
+
+    def update(self):
+        # con esto ya se actualiza con su propio tiempo
+
+        self.time += CHANGE_TIME
+
+        self.center_x += self.change_x
+        self.center_y = math.sin((self.center_x - self.inicio_x) / 100) * 100 + self.inicio_y
+
+        # Este angulo debo usar la dervada . Puedo con esto QUEDA PENDIENTE . USA atan2 (Ojo)
+        self.division = (self.center_x - self.inicio_x) / (self.center_y - self.inicio_y)
+        angulo_radians = math.atan(self.division)
+        self.angle = math.degrees(angulo_radians)
+
+# Disapro polinomial
+class Shoot_polinomial(arcade.Sprite):
+
+    # es necesario ponerlo de esa forma , ya que llamamos al padre de esa forma , con esos dos argumentos (podriamos poner mas) habra que probar todos los resultados
+    def __init__(self, filename, scale):
+        super().__init__(filename, scale)
+
+        # su propio tiempo inicia
+
+        self.time = 0
+        # conviene ponerlos alli , esto se hara una vez .
+        self.inicio_x = 0
+        self.inicio_y = 0
+
+        # sera la division , me servira para sacar el angulo
+        self.division = 0
+
+    def setup(self):
+        self.inicio_x = self.center_x
+        self.inicio_y = self.center_y
+
+    def update(self):
+        # con esto ya se actualiza con su propio tiempo
+
+        self.time += CHANGE_TIME
+
+        self.center_x += self.change_x
+        self.center_y = math.sin((self.center_x - self.inicio_x) / 100) * 100 + self.inicio_y
+
+        # Este angulo debo usar la dervada . Puedo con esto QUEDA PENDIENTE . USA atan2 (Ojo)
+        self.division = (self.center_x - self.inicio_x) / (self.center_y - self.inicio_y)
+        angulo_radians = math.atan(self.division)
+        self.angle = math.degrees(angulo_radians)
+
+
+# disparo_logaritmico
+class Shoot_log(arcade.Sprite):
+
+    # es necesario ponerlo de esa forma , ya que llamamos al padre de esa forma , con esos dos argumentos (podriamos poner mas) habra que probar todos los resultados
+    def __init__(self, filename, scale):
+        super().__init__(filename, scale)
+
+        # su propio tiempo inicia
+
+        self.time = 0
+        # conviene ponerlos alli , esto se hara una vez .
+        self.inicio_x = 0
+        self.inicio_y = 0
+
+        # sera la division , me servira para sacar el angulo
+        self.division = 0
+
+    def setup(self):
+        self.inicio_x = self.center_x
+        self.inicio_y = self.center_y
+
+    def update(self):
+        # con esto ya se actualiza con su propio tiempo
+
+        self.time += CHANGE_TIME
+
+        self.center_x += self.change_x
+        self.center_y = math.sin((self.center_x - self.inicio_x) / 100) * 100 + self.inicio_y
+
+        # Este angulo debo usar la dervada . Puedo con esto QUEDA PENDIENTE . USA atan2 (Ojo)
+        self.division = (self.center_x - self.inicio_x) / (self.center_y - self.inicio_y)
+        angulo_radians = math.atan(self.division)
+        self.angle = math.degrees(angulo_radians)
+
+
+# diparo_logaritmico
+class Shoot_exp(arcade.Sprite):
+
+    # es necesario ponerlo de esa forma , ya que llamamos al padre de esa forma , con esos dos argumentos (podriamos poner mas) habra que probar todos los resultados
+    def __init__(self, filename, scale):
+        super().__init__(filename, scale)
+
+        # su propio tiempo inicia
+
+        self.time = 0
+        # conviene ponerlos alli , esto se hara una vez .
+        self.inicio_x = 0
+        self.inicio_y = 0
+
+        # sera la division , me servira para sacar el angulo
+        self.division = 0
+
+    def setup(self):
+        self.inicio_x = self.center_x
+        self.inicio_y = self.center_y
+
+    def update(self):
+        # con esto ya se actualiza con su propio tiempo
+
+        self.time += CHANGE_TIME
+
+        self.center_x += self.change_x
+        self.center_y = math.sin((self.center_x - self.inicio_x) / 100) * 100 + self.inicio_y
+
+        # Este angulo debo usar la dervada . Puedo con esto QUEDA PENDIENTE . USA atan2 (Ojo)
+        self.division = (self.center_x - self.inicio_x) / (self.center_y - self.inicio_y)
+        angulo_radians = math.atan(self.division)
+        self.angle = math.degrees(angulo_radians)
+
+# disparo superpoderoso
+class Shoot_tan(arcade.Sprite):
+
+    # es necesario ponerlo de esa forma , ya que llamamos al padre de esa forma , con esos dos argumentos (podriamos poner mas) habra que probar todos los resultados
+    def __init__(self, filename, scale):
+        super().__init__(filename, scale)
+
+        # su propio tiempo inicia
+
+        self.time = 0
+        # conviene ponerlos alli , esto se hara una vez .
+        self.inicio_x = 0
+        self.inicio_y = 0
+
+        # sera la division , me servira para sacar el angulo
+        self.division = 0
+
+    def setup(self):
+        self.inicio_x = self.center_x
+        self.inicio_y = self.center_y
+
+    def update(self):
+        # con esto ya se actualiza con su propio tiempo
+
+        self.time += CHANGE_TIME
+
+        self.center_x += self.change_x
+        self.center_y = math.sin((self.center_x - self.inicio_x) / 100) * 100 + self.inicio_y
+
+        # Este angulo debo usar la dervada . Puedo con esto QUEDA PENDIENTE . USA atan2 (Ojo)
+        self.division = (self.center_x - self.inicio_x) / (self.center_y - self.inicio_y)
+        angulo_radians = math.atan(self.division)
+        self.angle = math.degrees(angulo_radians)
+
+
+# barrera_campana
+class Shoot_campana(arcade.Sprite):
+
+    # es necesario ponerlo de esa forma , ya que llamamos al padre de esa forma , con esos dos argumentos (podriamos poner mas) habra que probar todos los resultados
+    def __init__(self, filename, scale):
+        super().__init__(filename, scale)
+
+        # su propio tiempo inicia
+
+        self.time = 0
+        # conviene ponerlos alli , esto se hara una vez .
+        self.inicio_x = 0
+        self.inicio_y = 0
+
+        # sera la division , me servira para sacar el angulo
+        self.division = 0
+
+    def setup(self):
+        self.inicio_x = self.center_x
+        self.inicio_y = self.center_y
+
+    def update(self):
+        # con esto ya se actualiza con su propio tiempo
+
+        self.time += CHANGE_TIME
+
+        self.center_x += self.change_x
+        self.center_y = math.sin((self.center_x - self.inicio_x) / 100) * 100 + self.inicio_y
+
+        # Este angulo debo usar la dervada . Puedo con esto QUEDA PENDIENTE . USA atan2 (Ojo)
+        self.division = (self.center_x - self.inicio_x) / (self.center_y - self.inicio_y)
+        angulo_radians = math.atan(self.division)
+        self.angle = math.degrees(angulo_radians)
+
+
+# ----------------------------------------------- OBJETOS-------------------------------------------------------
+
+
+
+###################### JUGADOR ###########################
+
+class Player(arcade.Sprite):
+
+    # es necesario ponerlo de esa forma , ya que llamamos al padre de esa forma ,
+    # con esos dos argumentos (podriamos poner mas) habra que probar todos los resultados
+    def __init__(self, filename, scale):
+        super().__init__(filename, scale)
+
+        # .tipo_de_arma es un numero que va del 1 al 7 .
+        # para indicar que arma(function) se esta disparando .
+        self.tipo_de_arma = 1 # por defecto es 1 pero podria cambiar depende
+
+
+
+
+    def update(self):
+        pass
+
+
+
+###################### ENEMIGO 1 ###########################
+
+class Enemy1(arcade.Sprite):
+    # enemigo principal , habra mas de esto pero por ahora solo sera un enemigo simple
+    pass
+
+
+###################### JEFE FINAL ###########################
+
+class FinalBoss(arcade.Sprite):
+    # La inteligencia de este enemigo sera dificil de programar pero con fe puedo programarlo
+    pass
+
 ###################### MONEDAS ###########################
 
 class Coin(arcade.Sprite):
@@ -140,8 +324,8 @@ class Coin(arcade.Sprite):
         self.change_y = random.uniform(-1, 1)
 
         if self.change_x == 0 or self.change_y == 0:
-            self.change_x = 0.5
-            self.change_y = 0.5
+            self.change_x = 0.8
+            self.change_y = 0.8
 
     def update(self):
 
@@ -149,19 +333,18 @@ class Coin(arcade.Sprite):
         self.center_y += self.change_y
 
         # If we are out-of-bounds, then 'bounce'
-        if self.left < 0:
+        # haz las correcciones con las paredes , esto eventualmente cambiara cuadno hagas el juego principal
+        if self.left < SIZE_WALL :
             self.change_x *= -1
 
-        if self.right > SCREEN_WIDTH:
+        if self.right > SCREEN_WIDTH - SIZE_WALL :
             self.change_x *= -1
 
-        if self.bottom < 0:
+        if self.bottom < SIZE_WALL:
             self.change_y *= -1
 
-        if self.top > SCREEN_HEIGHT:
+        if self.top > SCREEN_HEIGHT - SIZE_WALL:
             self.change_y *= -1
-
-
 
 # ----------------------------------------------- Botones de juego-------------------------------------------------------
 
@@ -181,18 +364,11 @@ class BeginButton(TextButton):
 
     def on_release(self):
         if self.pressed:
-            print("liberado")
+
             self.inicio.comenzar_tutorial = True
             self.pressed = False # para no tener problemas
 
-
-
-
 # ----------------------------------------------- ESCENARIOS-------------------------------------------------------
-
-
-
-
 
 ###################### PANTALLA DE INICIO ###########################
 
@@ -271,48 +447,13 @@ class Inicio(arcade.View):
 
 
 
-
-
-
 ###################### PANTALLA DE TURIAL  ###########################
 
 
 class Tutorial(arcade.View):
-    # aca el jugador jugara disparando monedas , se indicara las instrucciones y cuando este listo ira a jugar en el escenario principal
-    def on_show(self):
-
-        arcade.set_background_color(arcade.color.ORANGE_PEEL)
-
-    def on_draw(self):
-        arcade.start_render()
-
-
-###################### PANTALLA DE JUEGO ###########################
-
-
-class Juego(arcade.View):
-    # El juego principal que es un escenario gigante
-    pass
-
-
-###################### PANTALLA DE BATALLA FINAL ###########################
-
-class FinalBattle(arcade.View):
-    # escenario final donde el jefe se encuentra y te quiere matar . Tiene mecanicas especificas
-    pass
-
-
-
-
-
-
-
-
-
-class MyGame(arcade.Window):
 
     def __init__(self):
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, "Function War")
+        super().__init__()
 
         self.player_list = None
         self.coin_list = None  # por el momento como nose crear sprites debo poner las monedas como enemigos
@@ -322,7 +463,11 @@ class MyGame(arcade.Window):
         self.player_sprite = None  # el sprite
         self.score = None  # la puntuacion es lo mas importante
 
-        self.set_mouse_visible(False)  # el mouse no debe verse
+
+        '''
+        esto lo elimino ya que arcade.view no tiene esto por defecto 
+        # self.set_mouse_visible(False)  # el mouse no debe verse
+        '''
 
         self.time = 0  # este va  a ser mi contador para el tiempo de trabajo
 
@@ -334,6 +479,11 @@ class MyGame(arcade.Window):
         # Este es para manejar la esquina inferior izquierda de nuestra vista de pantalla .
         self.view_left = 0  # coordenada x
         self.view_bottom = 0  # coordenada y
+
+        self.START_GAME = False # este sera la condicion para pasar al juego principal
+
+        self.setup() # es necesario hacer esto ya que el padre arcade.view no llama setup por defecto
+
 
     def setup(self):
 
@@ -371,49 +521,50 @@ class MyGame(arcade.Window):
             self.coin_list.append(coin)
 
         # lista de donde estara ubicado todos mis paredes
-        # Mis bloques son cuadrados de lado 64 pixeles . Aun nose por que pero creo que 0.5 de la medida de "SCALING BOX "
-        coordinate_list = [[470, 500],
-                           [400, 570],
-                           [470, 570],
-                           [100, 70],
-                           [100, 140],
-                           [100, 210],
-                           [100, 280],
-                           [100, 350],
-                           [100, 420],
-                           [100, 490],
-                           [100, 560],
-                           [100, 490],
-                           [100, 560],
-                           [100, 630],
-                           [100, 700],
-                           [100, 770],
-                           [100, 840],
-                           [100, 910]
-                           ]
+        # recuerda que mis imagenes son pixeles de paredes de 128 pixeles
+        # Mis bloques son cuadrados de lado 128*0.5= 64 pixeles .
+        # necesito dibujar paredes de una forma sencilla
 
         # Loop through coordinates
         # Dibuja todos mis paredes
-        for coordinate in coordinate_list:
-            wall = arcade.Sprite("boxCrate_double.png", SPRITE_SCALING_BOX)
-            wall.center_x = coordinate[1]
-            wall.center_y = coordinate[0]
-            self.wall_list.append(wall)
+        # Recuerda SIZE_WALL = 64
+        for x in range(0, SCREEN_WIDTH, SIZE_WALL ):
+            if x == 0 or x == SCREEN_WIDTH-SIZE_WALL:
+                for y in range(0, SCREEN_HEIGHT , SIZE_WALL ):
+                    wall = arcade.Sprite("boxCrate_double.png", SPRITE_SCALING_BOX)
+                    # espero no te confundas con .left y .bottom del sprite . eS intuitivo eso
+                    wall.left = x
+                    wall.bottom = y
+                    self.wall_list.append(wall)
+
+            else :
+                wall = arcade.Sprite("boxCrate_double.png", SPRITE_SCALING_BOX)
+                wall.left = x
+                wall.bottom = 0
+                self.wall_list.append(wall)
+
+                wall = arcade.Sprite("boxCrate_double.png", SPRITE_SCALING_BOX)
+                wall.left = x
+                wall.bottom = SCREEN_HEIGHT - SIZE_WALL
+                self.wall_list.append(wall)
+
 
         # Create the physics engine. Give it a reference to the player, and
         # the walls we can't run into.
         # Crea un physics engine (interaccion entre mi jugador y la lista de paredes)
         self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite, self.wall_list)
 
-        # Set the background color
-        # esto aun nose para que sirve
+
+
+    # aca el jugador jugara disparando monedas , se indicara las instrucciones y cuando este listo ira a jugar en el escenario principal
+    def on_show(self):
+
         arcade.set_background_color(arcade.color.AMAZON)
 
-    # dibujamos
     def on_draw(self):
         """
-        Render the screen.
-        """
+            Render the screen.
+            """
 
         # This command has to happen before we start drawing
         arcade.start_render()
@@ -429,20 +580,6 @@ class MyGame(arcade.Window):
         # dibujamos el puntaje en la parte superior derecha
         arcade.draw_text(f"Score: {self.score}", 10, 20, arcade.color.WHITE, 14)
 
-    # define el movimiento del personaje
-    def on_mouse_motion(self, x, y, dx, dy):
-        pass
-
-    '''
-          """
-        Called whenever the mouse moves.
-        """
-        # hazlo aparecer donde este mi jugador en el mouse
-        self.player_sprite.center_x = x
-        self.player_sprite.center_y = y
-
-    '''
-
     # accion cuando se presiona el mouse
     def on_mouse_press(self, x, y, button, modifiers):
         """
@@ -450,8 +587,29 @@ class MyGame(arcade.Window):
         """
 
         # Create a bullet
-        # carga el disparo
-        bullet = Bullet("laserBlue01.png", SPRITE_SCALING_LASER)
+        # carga el arma entre tantos que hay
+
+
+
+        if self.player_sprite.tipo_de_arma == 1 :
+            bullet = Shoot_lineal("laserBlue01.png", SPRITE_SCALING_LASER)
+        elif self.player_sprite.tipo_de_arma == 2 :
+            bullet = Shoot_sinoidal("laserBlue01.png", SPRITE_SCALING_LASER)
+        elif self.player_sprite.tipo_de_arma == 3 :
+            bullet = Shoot_polinomial("laserBlue01.png", SPRITE_SCALING_LASER)
+        elif self.player_sprite.tipo_de_arma == 4 :
+            bullet = Shoot_log("laserBlue01.png", SPRITE_SCALING_LASER)
+        elif self.player_sprite.tipo_de_arma == 5 :
+            bullet = Shoot_exp("laserBlue01.png", SPRITE_SCALING_LASER)
+        elif self.player_sprite.tipo_de_arma == 6 :
+            bullet = Shoot_tan("laserBlue01.png", SPRITE_SCALING_LASER)
+        elif self.player_sprite.tipo_de_arma == 7 :
+            bullet = Shoot_campana("laserBlue01.png", SPRITE_SCALING_LASER)
+
+
+
+
+
 
         # The image points to the right, and we want it to point up. So
 
@@ -477,32 +635,80 @@ class MyGame(arcade.Window):
         # añade un disparo a la lista
         self.bullet_list.append(bullet)
 
+
     # Si se presiona el teclado (Esto lo usare para el movimiento de mi personaje)
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
 
+        '''
+        W = UP
+        S = DOWN
+        A = LEFT
+        D = RIGHT
+        '''
+
         if key == arcade.key.W:
             self.player_sprite.change_y = MOVEMENT_SPEED
-        elif key == arcade.key.DOWN:
+        elif key == arcade.key.S:
             self.player_sprite.change_y = -MOVEMENT_SPEED
-        elif key == arcade.key.LEFT:
+        elif key == arcade.key.A:
             self.player_sprite.change_x = -MOVEMENT_SPEED
-        elif key == arcade.key.RIGHT:
+        elif key == arcade.key.D:
             self.player_sprite.change_x = MOVEMENT_SPEED
 
     # Cuando se deja de presionar . Para que mi jugador no siga avanzando
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
 
-        if key == arcade.key.W or key == arcade.key.DOWN:
+        if key == arcade.key.KEY_1 :
+            print("presionaste uno ")
+            self.player_sprite.tipo_de_arma = 1
+        elif key == arcade.key.KEY_2 :
+            print("presionaste dos ")
+            self.player_sprite.tipo_de_arma = 2
+        elif key == arcade.key.KEY_3 :
+            print("presionaste tres ")
+            self.player_sprite.tipo_de_arma = 3
+        elif key == arcade.key.KEY_4 :
+            print("presionaste 4 ")
+            self.player_sprite.tipo_de_arma = 4
+        elif key == arcade.key.KEY_5 :
+            print("presionaste 5 ")
+            self.player_sprite.tipo_de_arma = 5
+        elif key == arcade.key.KEY_6 :
+            print("presionaste 6 ")
+            self.player_sprite.tipo_de_arma = 6
+        elif key == arcade.key.KEY_7 :
+            print("presionaste 7 ")
+            self.player_sprite.tipo_de_arma = 7
+
+
+
+
+
+        # para que el jugador no siga avanzando despues de dejar de presionar
+        if key == arcade.key.W or key == arcade.key.S:
             self.player_sprite.change_y = 0
-        elif key == arcade.key.LEFT or key == arcade.key.RIGHT:
+        elif key == arcade.key.A or key == arcade.key.D:
             self.player_sprite.change_x = 0
+
+        # condidicion final para ver si mi juego continua o no
+
+        if key == arcade.key.ENTER :
+            self.START_GAME = True
 
     # la actualizacion en cada frame
     def update(self, delta_time):
 
-        self.time += CHANGE_TIME
+        if self.START_GAME:
+            COMENZAR_JUEGO = Juego() # creamos un nuevo objeto
+            # y nos vamos a la pantalla de INICIO DE JUEGO , LLEVANDOME LAS LISTAS A LOS JUGADORES , MONEDAS
+            # BALAS . DEBO LIMPIARLAS DE ALGUN MODO PARA NO TENER PROBLEMAS LUEGO CON LA MEMORAIA .
+            self.window.show_view(COMENZAR_JUEGO)  # nose como este metodo puede funcionar
+
+
+
+        self.time += delta_time
 
         """ Movement and game logic """
 
@@ -536,56 +742,41 @@ class MyGame(arcade.Window):
             if bullet.bottom > SCREEN_HEIGHT:
                 bullet.remove_from_sprite_lists()
 
-        # --- Manage Scrolling ---
 
-        # Keep track of if we changed the boundary. We don't want to call the
-        # set_viewport command if we didn't change the view port.
-        changed = False
 
-        # Scroll left
 
-        left_boundary = self.view_left + VIEWPORT_MARGIN  # borde izquierdo + margen
-        if self.player_sprite.left < left_boundary:
-            # se resta cuanto avanzo a la izquierda : el lado derecho analizalo . Es una diferencia pequeña (ojo)
-            self.view_left -= left_boundary - self.player_sprite.left
-            changed = True
+###################### PANTALLA DE JUEGO ###########################
 
-        # Scroll right
-        right_boundary = self.view_left + SCREEN_WIDTH - VIEWPORT_MARGIN  # borde derecho
-        if self.player_sprite.right > right_boundary:
-            self.view_left += self.player_sprite.right - right_boundary
-            changed = True
 
-        # Scroll up
-        top_boundary = self.view_bottom + SCREEN_HEIGHT - VIEWPORT_MARGIN  # borde superior
-        if self.player_sprite.top > top_boundary:
-            self.view_bottom += self.player_sprite.top - top_boundary
-            changed = True
+class Juego(arcade.View):
+    # El juego principal que es un escenario gigante
+    def on_show(self):
+        arcade.set_background_color(arcade.color.ORANGE_PEEL)
 
-        # Scroll down
-        bottom_boundary = self.view_bottom + VIEWPORT_MARGIN  # borde inferior
-        if self.player_sprite.bottom < bottom_boundary:
-            self.view_bottom -= bottom_boundary - self.player_sprite.bottom
-            changed = True
+    # dibuja el mensaje
+    def on_draw(self):
+        arcade.start_render()
+        arcade.draw_text("Instructions Screen", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
+                         arcade.color.BLACK, font_size=50, anchor_x="center")
+        arcade.draw_text("Click to advance", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 75,
+                         arcade.color.GRAY, font_size=20, anchor_x="center")
 
-        # Make sure our boundaries are integer values. While the view port does
-        # support floating point numbers, for this application we want every pixel
-        # in the view port to map directly onto a pixel on the screen. We don't want
-        # any rounding errors.
 
-        # Asegúrese de que nuestros límites sean valores enteros. Si bien el puerto de vista
-        # admite números de punto flotante, para esta aplicación queremos que cada píxel en el puerto de vista se
-        # asigne directamente a un píxel en la pantalla. No queremos ningún error de redondeo.
-        self.view_left = int(self.view_left)
-        self.view_bottom = int(self.view_bottom)
+###################### PANTALLA DE BATALLA FINAL ###########################
 
-        # If we changed the boundary values, update the view port to match
-        # se llama de nuevo a .set_viewport solo si el personaje se encuentra en los bordes
-        if changed:
-            arcade.set_viewport(self.view_left,
-                                SCREEN_WIDTH + self.view_left - 1,
-                                self.view_bottom,
-                                SCREEN_HEIGHT + self.view_bottom - 1)
+class FinalBattle(arcade.View):
+    # escenario final donde el jefe se encuentra y te quiere matar . Tiene mecanicas especificas
+    pass
+
+
+
+
+
+
+
+
+
+
 
 
 # ----------------------------------------------- COMANDO PARA INICIAR JUEGO ------------------------------------------------------

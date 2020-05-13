@@ -172,6 +172,7 @@ class MyGame(arcade.Window):
         self.player_sprite.center_x = 400
         self.player_sprite.center_y = 100
 
+
         # lo agregamos a la lista
         self.player_list.append(self.player_sprite)
 
@@ -341,6 +342,8 @@ class MyGame(arcade.Window):
 
    # la actualizacion en cada frame
     def update(self, delta_time):
+
+
 
         self.time += CHANGE_TIME
 
