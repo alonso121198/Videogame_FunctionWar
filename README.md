@@ -5,11 +5,11 @@ En la carpeta FunctionWar esta el juego . Para jugarlo haz lo siguiente en la te
 
 1 .- git clone https://github.com/alonso121198/Videogame_FunctionWar.git
 
-2 .- Descarga el paquete "arcade"+ con pip o con conda . https://arcade.academy/
+2 .- Descarga el paquete "arcade" con pip o con conda . https://arcade.academy/
 
 3 .- python ./FunctionWar/FunctionWarAdventure/FunctionWarAdventure.py
 
-Puedes unirte para ayudarme o escribirme un correo jalcalal@uni.pe . Y podria explicarte mas detalles del proyecto
+Puedes unirte para ayudarme o escribirme a jalcalal@uni.pe . Y podria explicarte mas detalles del proyecto
 
 Intrucciones :
 - w (arriba) 
