@@ -32,7 +32,7 @@ GRAVITY = 0.5
 # osea para que vea 40 pixeles a su borde antes de que se mueva mas a ese borde .
 
 VIEWPORT_MARGIN = 40
-RIGHT_MARGIN = 200
+RIGHT_MARGIN = 500
 
 # ----------------------------------------------- ARMAS -------------------------------------------------------
 
@@ -511,7 +511,9 @@ class Inicio(arcade.View):
         arcade.start_render()
         # dibuja todo lo heredado
         super().on_draw() # con esto traes todas las opciones de botones , osea el dibujado
-        arcade.draw_text("PRESIONA START PARA COMENZAR", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
+        arcade.draw_text("FunctionWar", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2+200,
+                         arcade.color.BLACK, font_size=100, anchor_x="center")
+        arcade.draw_text("PRESIONA START PARA COMENZAR ", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
                          arcade.color.BLACK, font_size=50, anchor_x="center")
 
     def update(self, delta_time):
@@ -648,6 +650,9 @@ class Tutorial(arcade.View):
 
         # This command has to happen before we start drawing
         arcade.start_render()
+
+        arcade.draw_text("Tienes armas desde el 1 al 5 \n 1: recta \n 2: sinoidal \n 3 : exp .... hasta 5 \n w (arriba) d(derecha) a(izquierda) s(abajo) click_mouse(disparar)", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
+                         arcade.color.BLACK, font_size=10, anchor_x="center")
 
         # Draw all the sprites.
         # dibujamos los sprites como lo deseamos
@@ -949,7 +954,7 @@ class Juego(arcade.View):
 
         # This command has to happen before we start drawing
         arcade.start_render()
-
+        
         # Draw all the sprites.
         # dibuja paredes y el jugador
         self.wall_list.draw()
