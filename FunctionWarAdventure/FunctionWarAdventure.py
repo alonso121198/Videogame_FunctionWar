@@ -4,6 +4,7 @@ import random
 from arcade.gui import *
 
 SPRITE_SCALING_PLAYER = 0.5
+BOSS_SCALLING = 3
 SPRITE_SCALING_COIN = 0.2
 SPRITE_SCALING_LASER = 0.8
 SPRITE_SCALING_BOX = 0.5
@@ -66,11 +67,14 @@ class Shoot_lineal(arcade.Sprite):
         # trayectoria de la bala
         self.center_x += self.change_x
         self.center_y = self.inicio_y
-
+        '''
         # Angulo de la bala
         self.division = 0
         angulo_radians = math.atan(self.division)
         self.angle = math.degrees(angulo_radians)
+        
+        '''
+
 
 
 # Disparo sinoidal
@@ -390,7 +394,107 @@ class Enemy1(arcade.Sprite):
 
 class FinalBoss(arcade.Sprite):
     # La inteligencia de este enemigo sera dificil de programar pero con fe puedo programarlo
-    pass
+    # es necesario ponerlo de esa forma , ya que llamamos al padre de esa forma ,
+    # con esos dos argumentos (podriamos poner mas) habra que probar todos los resultados
+    def __init__(self, filename, scale):
+        super().__init__(filename, scale)
+
+        self.time = 0 # hace cuenta del tiempo . Esto lo usare para controlar los disparos por segundo
+        self.bullet = 0 # para los disparos
+        # .tipo_de_arma es un numero que va del 1 al 7 .
+        # para indicar que arma(function) se esta disparando .
+        self.bullet_list = arcade.SpriteList()
+        self.wall_list = None # le pasare por valor esta lista . Las paredes sera necesario para el control de mi pared
+        self.lista_disparos_ajenos = None # disparos dej jugador que afectaran al enemigo
+        self.life = 200 # vida de mi personaje que se reducira
+        self.physics_engine = None # Lo usare para que salte
+
+
+        self.change_x = 6 # para que se mueva el enemigo
+
+
+        self.setup() # tiene que hacese manualmente en esta clase
+
+
+    def setup(self):
+        self.physics_engine = arcade.PhysicsEnginePlatformer(self,
+                                                             self.wall_list,
+                                                             gravity_constant=GRAVITY*2)
+
+
+    def on_update(self, delta_time):
+        # para avanzar el tiempo
+        self.time += delta_time
+
+
+
+        # con esto aseguro que se da un disparo cada 1 segundos
+        if self.time >= 1:
+            self.disparar()
+        self.bullet_list.update()
+
+
+
+        # para que salte
+        if self.physics_engine.can_jump():
+            self.change_y = JUMP_SPEED*2
+        self.physics_engine.update() # Se tiene que actualizar
+
+
+
+        # Este servira para eliminar balas fura de lugar
+        for bullet in self.bullet_list:
+            # If the bullet flies off-screen, remove it.
+            # si un disparo se escapo de la pantalla eliminalo
+            if bullet.bottom > SCREEN_HEIGHT:
+                bullet.remove_from_sprite_lists()
+            elif bullet.left < 0 +64:
+                bullet.remove_from_sprite_lists()
+            elif bullet.right > SCREEN_WIDTH :
+                bullet.remove_from_sprite_lists()
+
+        # manejamos al jugaodr para que no se escape de la pantalla
+        # If we are out-of-bounds, then 'bounce'
+        # haz las correcciones con las paredes , esto eventualmente cambiara cuadno hagas el juego principal
+        if self.left <= SIZE_WALL+2 :
+            self.change_x *= -1
+        # la verdad no se por que tienes que poner el igual , no se por que hace la diferencia pero por seaca lo pongo
+        # la verdad no se por que pongo ese 2 pero si no lo pongo el enemigo se traba o se bugea 
+        if self.right >= SCREEN_WIDTH - SIZE_WALL-2 :
+            self.change_x *= -1
+
+        if self.bottom < SIZE_WALL:
+            self.change_y *= -1
+
+        if self.top > SCREEN_HEIGHT - SIZE_WALL:
+            self.change_y *= -1
+
+    def disparar(self):
+        print("disparo")
+        bullet = Shoot_lineal("laserRed01.png", SPRITE_SCALING_LASER)
+
+        # rotate it.
+        # rotas la imagen
+        # como parte rotado la image
+        bullet.angle = 90  # lo mantendre en  por ahora
+
+        # Position the bullet
+        # comienza de la ubicacion del jugador
+        bullet.center_x = self.center_x
+        # pero desde la base de la cabeza de mi sprite jugador sale
+        bullet.bottom = self.top
+
+        # estableces el setup (inicio)
+        bullet.setup()
+
+        # la velocidad con que cambia mi disparo automaticamente
+        bullet.change_y = -BULLET_SPEED_Y
+        bullet.change_x = -BULLET_SPEED_X
+
+        # Add the bullet to the appropriate lists
+        # añade un disparo a la lista
+        self.bullet_list.append(bullet)
+        self.time = 0 # para que la velocidad de disparos se mantenga
 
 ###################### MONEDAS ###########################
 
@@ -1057,19 +1161,325 @@ class Juego(arcade.View):
 
 class FinalBattle(arcade.View):
     # escenario final donde el jefe se encuentra y te quiere matar . Tiene mecanicas especificas
-    def __init__(self,lista_player,lista_monedas,lista_balas,lista_cajas):
+    def __init__(self):
 
         super().__init__()
 
-    def on_show(self):
-        arcade.set_background_color(arcade.color.ORANGE_PEEL)
+        self.player_list = None
+        self.coin_list = None  # por el momento como nose crear sprites debo poner las monedas como enemigos
+        self.bullet_list = None  # mis balas
+        self.wall_list = None  # mi lista para las paredes
+        self.enemy_list = None # mi lista de enemigos
 
-    # dibuja el mensaje
+        self.player_sprite = None  # el sprite
+        self.boss_final = None # jefe final
+        self.score = None  # la puntuacion es lo mas importante
+
+        '''
+        esto lo elimino ya que arcade.view no tiene esto por defecto 
+        # self.set_mouse_visible(False)  # el mouse no debe verse
+        '''
+
+        self.time = 0  # este va  a ser mi contador para el tiempo de trabajo
+
+        # This variable holds our simple "physics engine"
+        # esta variaable se usara para poder simular una interaccion entre sprites
+        self.physics_engine = None
+
+        # Manage the view port
+        # Este es para manejar la esquina inferior izquierda de nuestra vista de pantalla .
+        self.view_left = 0  # coordenada x
+        self.view_bottom = 0  # coordenada y
+
+        self.FINAL_GAME = False  # este sera la condicion para pasar al juego principal
+
+        self.setup()  # es necesario hacer esto ya que el padre arcade.view no llama setup por defecto
+
+
+    def setup(self):
+
+        # Establecemos como comenzara el juego
+        self.player_list = arcade.SpriteList()  # sera lista de personajes
+        self.coin_list = arcade.SpriteList()  # Sera una lista de monedas(enemigos)
+        self.bullet_list = arcade.SpriteList()  # Sera una lista de balas
+        self.wall_list = arcade.SpriteList()  # Sera una lista de paredes
+        self.enemy_list = arcade.SpriteList() # sera una lista de enemigos (por ahora solo creare un enemigo
+
+        self.score = 0  # comenzamos con la anotacion
+
+        self.player_sprite = Player("character.png", SPRITE_SCALING_PLAYER)  # cargamos el personaje
+
+        # lo ubicamos inicialmente
+        self.player_sprite.center_x = 400
+        self.player_sprite.center_y = 100
+
+        # lo agregamos a la lista
+        self.player_list.append(self.player_sprite)
+
+        # creare mi boss_final
+        self.boss_final = FinalBoss("frog.png", BOSS_SCALLING)  # cargamos el jefe final
+        self.boss_final.wall_list = self.wall_list # ambas tendran la misma lista de paredes , lo cual es conveniente
+        self.boss_final.setup() # para establecer la mecanica de salto
+        self.boss_final.center_x = 800
+        self.boss_final.center_y = 400
+
+        # lo agregamos
+        self.enemy_list.append(self.boss_final)
+
+        # lista de donde estara ubicado todos mis paredes
+        # recuerda que mis imagenes son pixeles de paredes de 128 pixeles
+        # Mis bloques son cuadrados de lado 128*0.5= 64 pixeles .
+        # necesito dibujar paredes de una forma sencilla
+
+        # Loop through coordinates
+        # Dibuja todos mis paredes
+        # Recuerda SIZE_WALL = 64
+        for x in range(0, SCREEN_WIDTH, SIZE_WALL ):
+            if x == 0 or x == SCREEN_WIDTH-SIZE_WALL:
+                for y in range(0, SCREEN_HEIGHT , SIZE_WALL ):
+                    wall = arcade.Sprite("boxCrate_double.png", SPRITE_SCALING_BOX)
+                    # espero no te confundas con .left y .bottom del sprite . eS intuitivo eso
+                    wall.left = x
+                    wall.bottom = y
+                    self.wall_list.append(wall)
+
+            else :
+                wall = arcade.Sprite("boxCrate_double.png", SPRITE_SCALING_BOX)
+                wall.left = x
+                wall.bottom = 0
+                self.wall_list.append(wall)
+
+                wall = arcade.Sprite("boxCrate_double.png", SPRITE_SCALING_BOX)
+                wall.left = x
+                wall.bottom = SCREEN_HEIGHT - SIZE_WALL
+                self.wall_list.append(wall)
+
+
+        # Create the physics engine. Give it a reference to the player, and
+        # the walls we can't run into.
+        # Crea un physics engine (interaccion entre mi jugador y la lista de paredes)
+        self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite, self.wall_list)
+
+
+
+    # aca el jugador jugara disparando monedas , se indicara las instrucciones y cuando este listo ira a jugar en el escenario principal
+    def on_show(self):
+
+        arcade.set_background_color(arcade.color.AMAZON)
+
     def on_draw(self):
+        """
+            Render the screen.
+            """
+
+        # This command has to happen before we start drawing
         arcade.start_render()
 
+        arcade.draw_text("Tienes armas desde el 1 al 5 \n 1: recta \n 2: sinoidal \n 3 : exp .... hasta 5 \n w (arriba) d(derecha) a(izquierda) s(abajo) click_mouse(disparar)", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
+                         arcade.color.BLACK, font_size=10, anchor_x="center")
+
+        # Draw all the sprites.
+        # dibujamos los sprites como lo deseamos
+        self.coin_list.draw()
+        self.bullet_list.draw()
+        self.player_list.draw()
+        self.wall_list.draw()
+        self.enemy_list.draw()
+        self.boss_final.bullet_list.draw() # para que dibuje las balas que emite el enemigo
+
+        # Render the text
+        # dibujamos el puntaje en la parte superior derecha
+        arcade.draw_text(f"Score: {self.score}", 10, 20, arcade.color.WHITE, 14)
+
+    # accion cuando se presiona el mouse
+    def on_mouse_press(self, x, y, button, modifiers):
+        """
+        Called whenever the mouse button is clicked.
+        """
+
+        # Create a bullet
+        # carga el arma entre tantos que hay
 
 
+
+        if self.player_sprite.tipo_de_arma == 1 :
+            bullet = Shoot_lineal("laserBlue01.png", SPRITE_SCALING_LASER)
+        elif self.player_sprite.tipo_de_arma == 2 :
+            bullet = Shoot_sinoidal("laserBlue01.png", SPRITE_SCALING_LASER)
+        elif self.player_sprite.tipo_de_arma == 3 :
+            bullet = Shoot_polinomial("laserBlue01.png", SPRITE_SCALING_LASER)
+        elif self.player_sprite.tipo_de_arma == 4 :
+            bullet = Shoot_log("laserBlue01.png", SPRITE_SCALING_LASER)
+        elif self.player_sprite.tipo_de_arma == 5 :
+            bullet = Shoot_exp("laserBlue01.png", SPRITE_SCALING_LASER)
+        elif self.player_sprite.tipo_de_arma == 6 :
+            bullet = Shoot_tan("laserBlue01.png", SPRITE_SCALING_LASER)
+        elif self.player_sprite.tipo_de_arma == 7 :
+            bullet = Shoot_campana("laserBlue01.png", SPRITE_SCALING_LASER)
+
+
+
+
+
+
+        # The image points to the right, and we want it to point up. So
+
+        # rotate it.
+        # rotas la imagen
+        # como parte rotado la image
+        bullet.angle = 0
+
+        # Position the bullet
+        # comienza de la ubicacion del jugador
+        bullet.center_x = self.player_sprite.center_x
+        # pero desde la base de la cabeza de mi sprite jugador sale
+        bullet.bottom = self.player_sprite.top
+
+        # estableces el setup (inicio)
+        bullet.setup()
+
+        # la velocidad con que cambia mi disparo automaticamente
+        bullet.change_y = BULLET_SPEED_Y
+        bullet.change_x = BULLET_SPEED_X
+
+        # Add the bullet to the appropriate lists
+        # añade un disparo a la lista
+        self.bullet_list.append(bullet)
+
+
+    # Si se presiona el teclado (Esto lo usare para el movimiento de mi personaje)
+    def on_key_press(self, key, modifiers):
+        """Called whenever a key is pressed. """
+
+        '''
+        W = UP
+        S = DOWN
+        A = LEFT
+        D = RIGHT
+        '''
+
+        if key == arcade.key.W:
+            self.player_sprite.change_y = MOVEMENT_SPEED
+        elif key == arcade.key.S:
+            self.player_sprite.change_y = -MOVEMENT_SPEED
+        elif key == arcade.key.A:
+            self.player_sprite.change_x = -MOVEMENT_SPEED
+        elif key == arcade.key.D:
+            self.player_sprite.change_x = MOVEMENT_SPEED
+
+    # Cuando se deja de presionar . Para que mi jugador no siga avanzando
+    def on_key_release(self, key, modifiers):
+        """Called when the user releases a key. """
+
+        if key == arcade.key.KEY_1 :
+            print("presionaste uno ")
+            self.player_sprite.tipo_de_arma = 1
+        elif key == arcade.key.KEY_2 :
+            print("presionaste dos ")
+            self.player_sprite.tipo_de_arma = 2
+        elif key == arcade.key.KEY_3 :
+            print("presionaste tres ")
+            self.player_sprite.tipo_de_arma = 3
+        elif key == arcade.key.KEY_4 :
+            print("presionaste 4 ")
+            self.player_sprite.tipo_de_arma = 4
+        elif key == arcade.key.KEY_5 :
+            print("presionaste 5 ")
+            self.player_sprite.tipo_de_arma = 5
+        elif key == arcade.key.KEY_6 :
+            print("presionaste 6 ")
+            self.player_sprite.tipo_de_arma = 6
+        elif key == arcade.key.KEY_7 :
+            print("presionaste 7 ")
+            self.player_sprite.tipo_de_arma = 7
+
+
+
+
+
+        # para que el jugador no siga avanzando despues de dejar de presionar
+        if key == arcade.key.W or key == arcade.key.S:
+            self.player_sprite.change_y = 0
+        elif key == arcade.key.A or key == arcade.key.D:
+            self.player_sprite.change_x = 0
+
+        # condidicion final para ver si mi juego continua o no
+
+        if key == arcade.key.ENTER :
+            self.START_GAME = True
+
+    # la actualizacion en cada frame
+    def update(self, delta_time):
+
+        # por si que pasa si mi jugador muere o consigue derrotar al enemigo
+        if self.FINAL_GAME:
+
+
+            # vaciamos la lista de monedas
+            for coin in self.coin_list:
+                coin.remove_from_sprite_lists()
+
+            # Vaciamos la lista de balas
+            for bullet in self.bullet_list:
+                bullet.remove_from_sprite_lists()
+
+            # vaciamos la lista de parede
+            for wall in self.wall_list:
+                wall.remove_from_sprite_lists()
+
+            print("JUEGO TERMINADO")
+
+        self.time += delta_time
+
+        """ Movement and game logic """
+
+        # Call update on all sprites
+        # actualiza tanto las monedas como las balas
+        self.player_list.update()
+        self.coin_list.update()
+        self.bullet_list.update()
+        self.enemy_list.on_update() # on update uso por que el tiempo tiene interes para mi con el enemigo
+        self.physics_engine.update()  # tenemos que actualizar en cada momento como mi personaje interacciona con la lista de paredes
+
+        # Loop through each bullet
+        # conviene tener presente todo en una lista ya que podemos tener varias balaar
+        for bullet in self.bullet_list:
+
+            # Check this bullet to see if it hit a coin
+            # si disparo(s) choca con moneda(s)
+            hit_list = arcade.check_for_collision_with_list(bullet, self.coin_list)
+
+
+            # If it did, get rid of the bullet
+            # si choco elimina la bala  de la lista
+            if len(hit_list) > 0:
+                bullet.remove_from_sprite_lists()
+
+            # For every coin we hit, add to the score and remove the coin
+            for coin in hit_list:
+                coin.remove_from_sprite_lists()
+                self.score += 1  # agrega a la puntuacion
+
+            # If the bullet flies off-screen, remove it.
+            # si un disparo se escapo de la pantalla eliminalo
+            if bullet.bottom > SCREEN_HEIGHT:
+                bullet.remove_from_sprite_lists()
+            elif bullet.left < 0 +64:
+                bullet.remove_from_sprite_lists()
+            elif bullet.right > SCREEN_WIDTH :
+                bullet.remove_from_sprite_lists()
+
+        # Por si el juego termina
+        if  arcade.check_for_collision_with_list( self.player_sprite, self.enemy_list):
+            self.FINAL_GAME = True
+
+        # Por si es derrotado
+        if self.boss_final.life == 0 :
+            print("venciste al enemigo")
+
+        # Ese atributo indica si los disparos que lanzo el enemigo lo toco a mi compañero
+        if arcade.check_for_collision_with_list( self.player_sprite , self.boss_final.bullet_list ):
+            self.FINAL_GAME = True
 
 
 
@@ -1087,9 +1497,19 @@ def main():
     # en que pantalla comienza
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, "FunctionWarAdventure")
     window.total_score = 0 # cuantas monedas va a recolectar el jugador durante toda la partida para mostrarlas al final
+    '''
+    # Esto es el codigo oficial , lo omito para fines de crear el escenario final
     pantalla_inicio = Inicio()
     window.show_view(pantalla_inicio)
+    arcade.run()    
+    '''
+
+    final = FinalBattle()
+    window.show_view(final)
     arcade.run()
+
+
+
 
 
 if __name__ == "__main__":
