@@ -35,6 +35,7 @@ class Player(arcade.Sprite):
         # mirrored=True will mirror the image we load.
         texture = arcade.load_texture(":resources:images/enemies/bee.png")
         self.textures.append(texture)
+        # con el segundo argumento hacemos que vea hacia la derecha , ya que la imagen esta hacia la izquierda
         texture = arcade.load_texture(":resources:images/enemies/bee.png", mirrored=True)
         self.textures.append(texture)
 

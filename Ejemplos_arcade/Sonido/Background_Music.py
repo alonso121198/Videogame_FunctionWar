@@ -34,7 +34,7 @@ class MyGame(arcade.Window):
             self.current_song = 0
         print(f"Advancing song to {self.current_song}.")
 
-    def play_song(self):
+    def song(self):
         """ Play the song. """
         # Stop what is currently playing.
         if self.music:

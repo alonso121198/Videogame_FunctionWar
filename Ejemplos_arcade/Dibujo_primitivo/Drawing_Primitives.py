@@ -36,10 +36,12 @@ arcade.start_render()
 
 # Draw a grid
 # Draw vertical lines every 120 pixels
+# dibuja las lineas verticales
 for x in range(0, 601, 120):
     arcade.draw_line(x, 0, x, 600, arcade.color.BLACK, 2)
 
 # Draw horizontal lines every 200 pixels
+# dibuja las lineas horizontales
 for y in range(0, 601, 200):
     arcade.draw_line(0, y, 800, y, arcade.color.BLACK, 2)
 

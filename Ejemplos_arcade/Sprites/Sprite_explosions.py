@@ -28,26 +28,29 @@ BULLET_SPEED = 5
 
 EXPLOSION_TEXTURE_COUNT = 60
 
-
+# Esta parte es para invocar la explosion en el momento de la colision . Es tambien un objeto
 class Explosion(arcade.Sprite):
     """ This class creates an explosion animation """
 
     def __init__(self, texture_list):
+        # hereda todo
         super().__init__()
 
         # Start at the first frame
         self.current_texture = 0
-        self.textures = texture_list
+        self.textures = texture_list # es una lista de texturas
 
     def update(self):
 
         # Update to the next frame of the animation. If we are at the end
         # of our frames, then delete this sprite.
+
+        # actualiza la lista de sprites a mas 1 en cada actualizacion
         self.current_texture += 1
         if self.current_texture < len(self.textures):
             self.set_texture(self.current_texture)
         else:
-            self.remove_from_sprite_lists()
+            self.remove_from_sprite_lists() # cuando termine la lista se borra
 
 
 class MyGame(arcade.Window):
@@ -81,8 +84,9 @@ class MyGame(arcade.Window):
         # Pre-load the animation frames. We don't do this in the __init__
         # of the explosion sprite because it
         # takes too long and would cause the game to pause.
-        self.explosion_texture_list = []
+        self.explosion_texture_list = [] # sera la lista que almacene los frames de la animacion
 
+        # establece las dimensiones de mi explosion
         columns = 16
         count = 60
         sprite_width = 256
@@ -90,11 +94,16 @@ class MyGame(arcade.Window):
         file_name = ":resources:images/spritesheets/explosion.png"
 
         # Load the explosions from a sprite sheet
+        # los argumentos de load_spritesheet son ( filename , Posición X del área de recorte de la textura
+        # ,Posición Y del área de recorte de la textura. , numero de mosaicos de ancho que es la imagen,
+        # numero de mosacios en la imagen)
         self.explosion_texture_list = arcade.load_spritesheet(file_name, sprite_width, sprite_height, columns, count)
 
         # Load sounds. Sounds from kenney.nl
+        # el sonido de los disparos . Define el objeto en si mismo
         self.gun_sound = arcade.sound.load_sound(":resources:sounds/laser2.wav")
         self.hit_sound = arcade.sound.load_sound(":resources:sounds/explosion2.wav")
+
 
         arcade.set_background_color(arcade.color.AMAZON)
 
@@ -106,7 +115,7 @@ class MyGame(arcade.Window):
         self.player_list = arcade.SpriteList()
         self.coin_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
-        self.explosions_list = arcade.SpriteList()
+        self.explosions_list = arcade.SpriteList() # lista de explosiones
 
         # Set up the player
         self.score = 0
@@ -163,9 +172,11 @@ class MyGame(arcade.Window):
         """
 
         # Gunshot sound
+        # emite el sonido , argumentos ( el sonido ,volumen(0-1) , Pan, from -1=left to 0=centered to 1=right )
         arcade.sound.play_sound(self.gun_sound)
 
         # Create a bullet
+        # crear la bala
         bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png", SPRITE_SCALING_LASER)
 
         # The image points to the right, and we want it to point up. So
@@ -190,28 +201,35 @@ class MyGame(arcade.Window):
         self.explosions_list.update()
 
         # Loop through each bullet
+        # para ver si golpea la bala contra la moneda
         for bullet in self.bullet_list:
 
             # Check this bullet to see if it hit a coin
+            # si golpea
             hit_list = arcade.check_for_collision_with_list(bullet, self.coin_list)
 
             # If it did...
             if len(hit_list) > 0:
 
                 # Make an explosion
+                # se carga la explosion
                 explosion = Explosion(self.explosion_texture_list)
 
                 # Move it to the location of the coin
+                # la explosion comienza en el origen de la moneda
                 explosion.center_x = hit_list[0].center_x
                 explosion.center_y = hit_list[0].center_y
 
                 # Call update() because it sets which image we start on
+                # para iniciar la explosion ( prueba borrar esto a ver que sale)
                 explosion.update()
 
                 # Add to a list of sprites that are explosions
+                # agrega a la lista
                 self.explosions_list.append(explosion)
 
                 # Get rid of the bullet
+                # se borra la bala
                 bullet.remove_from_sprite_lists()
 
             # For every coin we hit, add to the score and remove the coin
@@ -219,8 +237,8 @@ class MyGame(arcade.Window):
                 coin.remove_from_sprite_lists()
                 self.score += 1
 
-                # Hit Sound
-                arcade.sound.play_sound(self.hit_sound)
+                # Hit Sound . sonido de choque
+                arcade.sound.play_sound(self.hit_sound )
 
             # If the bullet flies off-screen, remove it.
             if bullet.bottom > SCREEN_HEIGHT:
