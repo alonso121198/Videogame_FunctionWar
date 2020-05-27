@@ -53,7 +53,7 @@ class PlayerCharacter(arcade.Sprite):
 
         # Track out state
         self.jumping = False
-        self.climbing = False
+          self.climbing = False
         self.is_on_ladder = False
         self.scale = CHARACTER_SCALING # = 1
 

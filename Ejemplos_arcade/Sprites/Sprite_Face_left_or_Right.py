@@ -45,6 +45,8 @@ class Player(arcade.Sprite):
         self.set_texture(TEXTURE_RIGHT)
 
     def update(self):
+
+
         self.center_x += self.change_x
         self.center_y += self.change_y
 
