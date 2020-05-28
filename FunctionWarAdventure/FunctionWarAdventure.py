@@ -621,7 +621,7 @@ class EnemyRock(arcade.Sprite):
         self.center_y += self.change_y
 
     def activacion_caida(self):
-        self.change_y = -20
+        self.change_y = -18
 
 ###################### ENEMIGO 3 ###########################
 
@@ -651,9 +651,6 @@ class EnemyCircularSaw(arcade.Sprite):
         # If the enemy hit the right boundary, reverse
         elif  self.top > self.boundary_top:
             self.change_y *= -1
-
-
-
 
 ###################### JEFE FINAL ###########################
 
@@ -694,7 +691,7 @@ class FinalBoss(arcade.Sprite):
         # esctenramnete pasare usare esta variable asi que no te confundas
         self.wall_list = None # le pasare por valor esta lista . Las paredes sera necesario para el control de mi pared
         self.lista_disparos_ajenos = None # disparos dej jugador que afectaran al enemigo
-        self.life = LIFE # vida de mi personaje que se reducira
+        self.life = 15*LIFE # vida de mi personaje que se reducira
         self.physics_engine = None # Lo usare para que salte
 
 
@@ -725,10 +722,8 @@ class FinalBoss(arcade.Sprite):
         '''
 
         '''Estado 1'''
-        if 0.5*LIFE < self.life <= LIFE:
-            if 0.25 * LIFE < self.life <= 0.5 * LIFE:
-                # con esto aseguro que se da un disparo cada 1 segundos
-                if self.time1 >= 1:
+        if 0.9*(LIFE*15) < self.life <= (LIFE*15):
+            if self.time1 >= 0.4:
                     self.disparar()
 
 
@@ -742,9 +737,9 @@ class FinalBoss(arcade.Sprite):
 
         '''Estado 2'''
 
-        if 0.25*LIFE < self.life <= 0.5*LIFE :
+        if 0.25*(LIFE*15) < self.life <= 0.9*(LIFE*15):
             # con esto aseguro que se da un disparo cada 1 segundos
-            if self.time1 >= 1:
+            if self.time1 >= 0.3:
                 self.disparar()
 
             self.bullet_list.update()
@@ -778,9 +773,9 @@ class FinalBoss(arcade.Sprite):
 
 
         '''estado 3'''
-        if self.life <= 0.25*LIFE:
+        if self.life <= 0.25*(LIFE*15):
             # con esto aseguro que se da un disparo cada 1 segundos
-            if self.time1 >= 1:
+            if self.time1 >= 0.4:
                 self.disparar()
 
             self.bullet_list.update()
@@ -804,7 +799,6 @@ class FinalBoss(arcade.Sprite):
 
             if self.top >= SCREEN_HEIGHT-(SIZE_WALL+50):
 
-                print("alonso")
                 # en el caso que toque el techo
                 if self.change_x > 0:
                     self.center_x += 30
@@ -857,8 +851,8 @@ class FinalBoss(arcade.Sprite):
 
         # Vaciamos la lista de balas . si desaparece mi personaje tambien debe desaparecer sus balas
         for bullet in self.bullet_list:
+            print(len(self.bullet_list))
             bullet.remove_from_sprite_lists()
-
 
 ###################### MONEDAS ###########################
 
@@ -867,8 +861,8 @@ class Coin(arcade.Sprite):
     def __init__(self, filename, scale):
         super().__init__(filename, scale)
 
-        self.change_x = random.uniform(-1, 1)
-        self.change_y = random.uniform(-1, 1)
+        self.change_x = random.uniform(-3, 3)
+        self.change_y = random.uniform(-3, 3)
 
         if self.change_x == 0 or self.change_y == 0:
             self.change_x = 0.8
@@ -881,7 +875,7 @@ class Coin(arcade.Sprite):
 
         # If we are out-of-bounds, then 'bounce'
         # haz las correcciones con las paredes , esto eventualmente cambiara cuadno hagas el juego principal
-        if self.left < SIZE_WALL :
+        if self.left < SIZE_WALL:
             self.change_x *= -1
 
         if self.right > SCREEN_WIDTH - SIZE_WALL :
@@ -898,8 +892,6 @@ class Coin2(arcade.Sprite):
 
     def __init__(self, filename, scale):
         super().__init__(filename, scale)
-
-
 
 
     def update(self):
@@ -941,6 +933,7 @@ class Inicio(arcade.View):
         self.comenzar_tutorial = False # la condicion que si presiona el boton Start
         self.setup()  # esto es para establecer las condiciones iniciales , lo pondria "on_show()" pero hay problemas si lo pongo alli
 
+        self.texture = arcade.load_texture("TitleFuncionWar.png")  # cargando mi titulo
 
 
     # este es para establecer todos los temas a mi boton , son varias opciones  a analizar
@@ -965,7 +958,7 @@ class Inicio(arcade.View):
     def set_buttons(self):
 
         # self.button_list ya esta definido al llamar al padre y se encarga de guardar los botones
-        self.button_list.append(BeginButton(self, 60, 570, 110, 50, theme=self.theme)) # solo un boton agregare , fijate que el ultimo argumento se dibuja el tema
+        self.button_list.append(BeginButton(self, SCREEN_WIDTH/2, SCREEN_HEIGHT*3/10, 200, 100, theme=self.theme)) # solo un boton agregare , fijate que el ultimo argumento se dibuja el tema
 
 
     # se llama cuando se llama a inicio , es como setup en arcade.setup()
@@ -973,7 +966,7 @@ class Inicio(arcade.View):
     def on_show(self):
 
         # fondo de pantalla
-        arcade.set_background_color(arcade.color.WHITE)
+        arcade.set_background_color( (230, 242, 223) )
 
     # voy a crear mi setup propio y lo voy a llamar en init para no tener problemas por que on_show se llama dos veces
     def setup(self):
@@ -981,6 +974,7 @@ class Inicio(arcade.View):
         # para estableces los temas y los botones de los metodos antes definidos
         self.setup_theme()
         self.set_buttons()
+
 
     
     # dibujare el boton inicio , para comenzar a jugar
@@ -991,10 +985,11 @@ class Inicio(arcade.View):
         arcade.start_render()
         # dibuja todo lo heredado
         super().on_draw() # con esto traes todas las opciones de botones , osea el dibujado
-        arcade.draw_text("FunctionWar", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2+200,
-                         arcade.color.BLACK, font_size=100, anchor_x="center")
-        arcade.draw_text("PRESIONA START PARA COMENZAR ", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
-                         arcade.color.BLACK, font_size=50, anchor_x="center")
+        arcade.draw_scaled_texture_rectangle(SCREEN_WIDTH/2, SCREEN_HEIGHT*3/4, self.texture, 1.8, 0)
+
+        # arcade.draw_text("FunctionWar", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2+200,arcade.color.BLACK, font_size=100, anchor_x="center")
+        arcade.draw_text("PRESIONA START PARA COMENZAR ", SCREEN_WIDTH/2, SCREEN_HEIGHT*2/5,
+                         (242, 140, 56), font_size=50, anchor_x="center")
 
     def update(self, delta_time):
 
@@ -1074,8 +1069,9 @@ class Tutorial(arcade.View):
             coin = Coin("coin_01.png", SPRITE_SCALING_COIN)
 
             # Position the coin
-            coin.center_x = random.randrange(SCREEN_WIDTH)
-            coin.center_y = random.randrange(120, SCREEN_HEIGHT)
+            # esos 20 es para evitar posibles bugs al momento de iniciar
+            coin.center_x = random.randrange(SIZE_WALL+20,SCREEN_WIDTH-SIZE_WALL-20)
+            coin.center_y = random.randrange(SIZE_WALL+20, SCREEN_HEIGHT-SIZE_WALL-20)
 
             # Add the coin to the lists
             # lo agregamos a la lista
@@ -1125,14 +1121,21 @@ class Tutorial(arcade.View):
     def on_draw(self):
         """
             Render the screen.
-            """
+        """
 
         # This command has to happen before we start drawing
         arcade.start_render()
 
-        arcade.draw_text("Tienes armas desde el 1 al 5 \n 1: recta \n 2: sinoidal \n 3 : exp .... hasta 5 \n w (arriba) d(derecha) a(izquierda) s(abajo) click_mouse(disparar)", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
-                         arcade.color.BLACK, font_size=10, anchor_x="center")
-
+        # Dibujamos la pantalla del tutorial
+        arcade.draw_lrtb_rectangle_filled(1.2*SIZE_WALL, 4.4*SIZE_WALL, SCREEN_HEIGHT-1.1*SIZE_WALL,SCREEN_HEIGHT-5*SIZE_WALL , (181, 191, 126))
+        arcade.draw_text("CONTROLS", 1.3*SIZE_WALL, SCREEN_HEIGHT-1.6*SIZE_WALL,
+                         arcade.color.BLACK, font_size=25, anchor_x="left")
+        arcade.draw_text("W: UP/JUMP \n D: RIGHT \n A: LEFT \n S: DOWN  \n 1: SHOOT LINEAL"
+                         "\n 2: SHOOT SENO \n 3: SHOOT POLINOMIO \n 4: SHOOT LOG \n 5: SHOOT EXPONENCIAL "
+                         "\n 6: SPECIAL TANG \n 7: BELL SHIELD \n PRESS MOUSE: SHOOT", 1.3*SIZE_WALL, SCREEN_HEIGHT-5*SIZE_WALL,
+                         (41, 6, 2), font_size=15, anchor_x="left")
+        arcade.draw_text("PRESS ENTER TO CONTINUE", SCREEN_WIDTH- 6*SIZE_WALL, SCREEN_HEIGHT-1.6*SIZE_WALL,
+                         arcade.color.BLACK, font_size=20, anchor_x="left")
         # Draw all the sprites.
         # dibujamos los sprites como lo deseamos
         self.coin_list.draw()
@@ -1323,7 +1326,7 @@ class Juego(arcade.View):
         self.enemy_list = None # mi lista de enemigos
 
         self.player_sprite = lista_player[0]  # el sprite
-        self.score = None  # la puntuacion es lo mas importante
+        self.score = 0  # la puntuacion es lo mas importante
 
         '''
         esto lo elimino ya que arcade.view no tiene esto por defecto 
@@ -1437,6 +1440,10 @@ class Juego(arcade.View):
         self.player_list.draw()
         self.enemy_list.draw()
 
+        # Consejo para el jugador
+        arcade.draw_text("RECOLECTA TODAS LAS MONEDAS PARA \n OBTENER EL DISPARO LOGARITMICO ", SIZE_WALL*6, SCREEN_HEIGHT *0.5, arcade.color.BLACK, font_size=30, anchor_x="center")
+
+
     def on_key_press(self, key, modifiers):
         """
         Called whenever the mouse moves.
@@ -1473,16 +1480,22 @@ class Juego(arcade.View):
 
 
         for enemy in self.enemy_list:
-
             # registra si eres un enemigo tipo roca y si el jugador esta adelantado a la posicion de ese enemigo
             # si es asi entonces activa lal caida de la roca
             if isinstance(enemy,EnemyRock) and (enemy.center_x < self.player_sprite.center_x):
                 enemy.activacion_caida()
 
             # se acabo automaticamente si el jugador es tocado por alguien
-            if  arcade.check_for_collision(enemy, self.player_sprite):
+            if  arcade.check_for_collision(enemy, self.player_sprite) or self.player_sprite.center_y < 0:
                 self.GameOver = True
                 break
+
+
+        for coin in self.coin_list:
+            if arcade.check_for_collision(coin,self.player_sprite):
+                coin.remove_from_sprite_lists()
+                self.score += 1
+
 
 
         # --- Manage Scrolling ---
@@ -1534,8 +1547,6 @@ class Juego(arcade.View):
             for enemy in self.enemy_list:
                 enemy.remove_from_sprite_lists()
 
-
-
             # me doy cuenta de que el ciclo for sigue se pone en segundo plano si no acaba su proceso
             # con este if aseguro de que he borrado todas las cosas de antes . Asi evito sobrecarga de memoria
             if len(self.wall_list) == 0 and len(self.coin_list) == 0 and len(self.bullet_list) == 0 and \
@@ -1550,8 +1561,8 @@ class Juego(arcade.View):
 
 
 
-        # mi condicion si el jugador llega a conseguir llegar a la meta
-        if  SIZE_WALL*10  < self.player_sprite.center_x:
+        # mi condicion si el jugador llega a conseguir llegar aL PUNTO FINAL DE ESTE MAPA QUE TIENE 153 VECES EL TAMAÑO DEL BLOQUE
+        if  SIZE_WALL*153 < self.player_sprite.center_x  :
             self.START_FINAL_BOSS = True
 
         # te vas a la pelea de la batalla final
@@ -1571,14 +1582,13 @@ class Juego(arcade.View):
 
             # no te olvides de regresar el enfoque de camara a la normalidad
             arcade.set_viewport(0,SCREEN_WIDTH ,0,SCREEN_HEIGHT )
-
             # me doy cuenta de que el ciclo for sigue se pone en segundo plano si no acaba su proceso
             # con este if aseguro de que he borrado todas las cosas de antes . Asi evito sobrecarga de memoria
             if len(self.wall_list) == 0 and len(self.coin_list) == 0 and len(self.bullet_list) == 0 and len(self.player_list)==0:
-                Pantalla_de_carga = PantallaDeCarga()  # creamos un nuevo objeto
+                # pasamos self.score para que el jugador desbloquee el poder del logaritmo
+                Pantalla_de_carga = PantallaDeCarga(self.score)  # creamos un nuevo objeto
                 # y nos vamos a la pantalla de INICIO DE JUEGO , sin llevarnos  LISTAS A LOS JUGADORES , MONEDAS
                 # BALAS . DEBO LIMPIARLAS DE ALGUN MODO PARA NO TENER PROBLEMAS LUEGO CON LA MEMORAIA .
-
                 self.window.show_view(Pantalla_de_carga)  # nose como este metodo puede funcionar
 
 
@@ -1587,7 +1597,7 @@ class Juego(arcade.View):
 
 class FinalBattle(arcade.View):
     # escenario final donde el jefe se encuentra y te quiere matar . Tiene mecanicas especificas
-    def __init__(self,explosiones_list):
+    def __init__(self,explosiones_list,score):
 
         super().__init__()
 
@@ -1602,14 +1612,12 @@ class FinalBattle(arcade.View):
 
         self.player_sprite = None  # el sprite
         self.boss_final = None # jefe final
-        self.score = None  # la puntuacion es lo mas importante
+        self.score = score # la puntuacion es lo mas importante
 
         '''
         esto lo elimino ya que arcade.view no tiene esto por defecto 
         # self.set_mouse_visible(False)  # el mouse no debe verse
         '''
-
-
 
         self.time = 0  # este va  a ser mi contador para el tiempo de trabajo
 
@@ -1645,6 +1653,7 @@ class FinalBattle(arcade.View):
 
 
         self.FINAL_GAME = False  # este sera la condicion para pasar al juego principal
+        self.ganaste = False # sera la condicion para que el jugador salga victorioso
 
 
         self.setup()  # es necesario hacer esto ya que el padre arcade.view no llama setup por defecto
@@ -1664,10 +1673,6 @@ class FinalBattle(arcade.View):
 
 
 
-
-
-
-        self.score = 0  # comenzamos con la anotacion
 
         self.player_sprite = Player("character.png", SPRITE_SCALING_PLAYER)  # cargamos el personaje
 
@@ -1738,9 +1743,6 @@ class FinalBattle(arcade.View):
         # This command has to happen before we start drawing
         arcade.start_render()
 
-        arcade.draw_text("Tienes armas desde el 1 al 5 \n 1: recta \n 2: sinoidal \n 3 : exp .... hasta 5 \n w (arriba) d(derecha) a(izquierda) s(abajo) click_mouse(disparar)", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
-                         arcade.color.BLACK, font_size=10, anchor_x="center")
-
         # Draw all the sprites.
         # dibujamos los sprites como lo deseamos
         self.coin_list.draw()
@@ -1751,6 +1753,11 @@ class FinalBattle(arcade.View):
         self.boss_final.bullet_list.draw() # para que dibuje las balas que emite el enemigo
         self.explosions_list.draw() # DIBUJAR LA LISTA DE EXPLOSIONES
 
+        if self.ganaste:
+            arcade.draw_text("ERES UN GANADOR ", SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.7,
+                            (26, 144, 217), font_size=90, anchor_x="center")
+
+
         # Render the text
         # dibujamos el puntaje en la parte superior derecha
         arcade.draw_text(f"Score: {self.score}", 10, 20, arcade.color.WHITE, 14)
@@ -1758,14 +1765,18 @@ class FinalBattle(arcade.View):
         # dibujamos barra del vida del player
         # aunque la division no es entera no causa problemas en el dibujado
         porcentaje1 = self.player_sprite.life / LIFE
-        barra_de_vida1("Alonso Alcala",SIZE_WALL,SIZE_WALL+300,SCREEN_HEIGHT-30,SCREEN_HEIGHT-SIZE_WALL,arcade.color.BLACK,
-                      (0, 171, 102) , porcentaje1)
+        # con este if evito bugs
+        if porcentaje1 >= 0 :
+            barra_de_vida1("Alonso Alcala",SIZE_WALL,SIZE_WALL+300,SCREEN_HEIGHT-30,SCREEN_HEIGHT-SIZE_WALL,arcade.color.BLACK,
+                        (0, 171, 102) , porcentaje1)
 
         # dibujamos barra del vida del player
         # aunque la division no es entera no causa problemas en el dibujado
-        porcentaje2 = self.boss_final.life / LIFE
-        barra_de_vida2("BOSS", SCREEN_WIDTH-SIZE_WALL, SCREEN_WIDTH-10 , SCREEN_HEIGHT - 2*SIZE_WALL ,
-                       SCREEN_HEIGHT - 10*SIZE_WALL, arcade.color.BLACK, 	(65, 68, 224), porcentaje2)
+        porcentaje2 = self.boss_final.life / (LIFE*15)
+        # manera de evitar bugs
+        if porcentaje2 >= 0:
+            barra_de_vida2("BOSS", SCREEN_WIDTH-SIZE_WALL, SCREEN_WIDTH-10 , SCREEN_HEIGHT - 2*SIZE_WALL ,
+                        SCREEN_HEIGHT - 10*SIZE_WALL, arcade.color.BLACK, 	(65, 68, 224), porcentaje2)
 
     # accion cuando se presiona el mouse
     def on_mouse_press(self, x, y, button, modifiers):
@@ -1785,7 +1796,9 @@ class FinalBattle(arcade.View):
         elif self.player_sprite.tipo_de_arma == 3 :
             bullet = Shoot_polinomial("laserBlue01.png", SPRITE_SCALING_LASER)
         elif self.player_sprite.tipo_de_arma == 4 :
-            bullet = Shoot_log("laserBlue01.png", SPRITE_SCALING_LASER)
+            bullet = Shoot_lineal("laserBlue01.png", SPRITE_SCALING_LASER)
+            if self.score == 18:
+                bullet = Shoot_log("laserBlue01.png", SPRITE_SCALING_LASER)
         elif self.player_sprite.tipo_de_arma == 5 :
             bullet = Shoot_exp("laserBlue01.png", SPRITE_SCALING_LASER)
         elif self.player_sprite.tipo_de_arma == 6 :
@@ -1887,25 +1900,6 @@ class FinalBattle(arcade.View):
     # la actualizacion en cada frame
     def update(self, delta_time):
 
-
-        # por si que pasa si mi jugador muere o consigue derrotar al enemigo
-        if self.FINAL_GAME:
-
-
-            # vaciamos la lista de monedas
-            for coin in self.coin_list:
-                coin.remove_from_sprite_lists()
-
-            # Vaciamos la lista de balas
-            for bullet in self.bullet_list:
-                bullet.remove_from_sprite_lists()
-
-            # vaciamos la lista de parede
-            for wall in self.wall_list:
-                wall.remove_from_sprite_lists()
-
-            print("JUEGO TERMINADO")
-
         self.time += delta_time
 
         """ Movement and game logic """
@@ -1958,11 +1952,7 @@ class FinalBattle(arcade.View):
 
             # If the bullet flies off-screen, remove it.
             # si un disparo se escapo de la pantalla, eliminalo
-            if bullet.bottom > SCREEN_HEIGHT:
-                bullet.remove_from_sprite_lists()
-            elif bullet.left < 0 +64:
-                bullet.remove_from_sprite_lists()
-            elif bullet.right > SCREEN_WIDTH :
+            if bullet.bottom > SCREEN_HEIGHT-SIZE_WALL or bullet.right >= SCREEN_WIDTH-SIZE_WALL:
                 bullet.remove_from_sprite_lists()
 
         # Por si el juego termina
@@ -1977,6 +1967,8 @@ class FinalBattle(arcade.View):
         if self.boss_final.life <= 0 :
             self.boss_final.remove_from_sprite_lists() # muere mi personaje
             self.boss_final.death() # y muere todo lo que le pertenecia al boss
+            self.ganaste = True
+            self.boss_final.life = 0 # esto es para no tener bugs en el dibujado (recuerda  la variable "porcentaje2")
 
 
         # Ese atributo indica si los disparos que lanzo el enemigo lo toco a mi compañero
@@ -1986,8 +1978,39 @@ class FinalBattle(arcade.View):
         if arcade.check_for_collision_with_list( self.player_sprite , self.boss_final.bullet_list ):
             self.player_sprite.life -= 0.4
             # si su vida se acaba muere mi personaje
-            if self.player_sprite.life <= 0:
+            if self.player_sprite.life < 0:
                 self.FINAL_GAME = True
+                self.player_sprite.life = 0 # para evitar bugs
+
+
+        # por si que pasa si mi jugador muere o consigue derrotar al enemigo
+        if self.FINAL_GAME:
+            # aca si tenemos que hacer una limpieza total
+            for player in self.player_list:
+                player.remove_from_sprite_lists()
+            # vaciamos la lista de monedas
+            for coin in self.coin_list:
+                coin.remove_from_sprite_lists()
+            # Vaciamos la lista de balas
+            for bullet in self.bullet_list:
+                bullet.remove_from_sprite_lists()
+            # vaciamos la lista de parede
+            for wall in self.wall_list:
+                wall.remove_from_sprite_lists()
+            for enemy in self.enemy_list:
+                enemy.remove_from_sprite_lists()
+
+            # me doy cuenta de que el ciclo for sigue se pone en segundo plano si no acaba su proceso
+            # con este if aseguro de que he borrado todas las cosas de antes . Asi evito sobrecarga de memoria
+            if len(self.wall_list) == 0 and len(self.coin_list) == 0 and len(self.bullet_list) == 0 and \
+                    len(self.player_list) == 0 and len(self.enemy_list) == 0:
+                # no te olvides de regresar el enfoque de camara a la normalidad
+                arcade.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
+                Gameover = GameOver()  # creamos un nuevo objeto
+                # y nos vamos a la pantalla de INICIO DE JUEGO , sin llevarnos  LISTAS A LOS JUGADORES , MONEDAS
+                # BALAS . DEBO LIMPIARLAS DE ALGUN MODO PARA NO TENER PROBLEMAS LUEGO CON LA MEMORAIA .
+
+                self.window.show_view(Gameover)  # nose como este metodo puede funcionar
 
 ########################################### Pantallas opcionales ################################
 
@@ -1996,12 +2019,17 @@ class FinalBattle(arcade.View):
 class GameOver(arcade.View):
     # el incio de mi juego
 
+    # el incio de mi juego
+
     # esto no es parte de arcade.View pero es necesario para mis textos por si lo quiero modificar algun dia
     def __init__(self):
         super().__init__()
         self.theme = None
         self.comenzar_tutorial = False  # la condicion que si presiona el boton Start
+        self.gameover = False # la condicion para que el juego acabe definitivamente
         self.setup()  # esto es para establecer las condiciones iniciales , lo pondria "on_show()" pero hay problemas si lo pongo alli
+        self.time =  10 # para controlar el tiempo
+
 
     # este es para establecer todos los temas a mi boton , son varias opciones  a analizar
     def set_button_textures(self):
@@ -2022,14 +2050,14 @@ class GameOver(arcade.View):
     # para agregar los distintos botones que se usara , aca ya entra que tipo de boton sera
     def set_buttons(self):
         # self.button_list ya esta definido al llamar al padre y se encarga de guardar los botones
-        self.button_list.append(BeginButton(self, 60, 570, 110, 50,
+        self.button_list.append(BeginButton(self, SCREEN_WIDTH/2, SCREEN_HEIGHT*3/10, 200, 100,
                                             theme=self.theme))  # solo un boton agregare , fijate que el ultimo argumento se dibuja el tema
 
     # se llama cuando se llama a inicio , es como setup en arcade.setup()
     # on_show se llama dos veces y no se por que . Eso me causa conflictos asi que aca no pongas creaciones de botones
     def on_show(self):
         # fondo de pantalla
-        arcade.set_background_color(arcade.color.WHITE)
+        arcade.set_background_color((230, 242, 223))
 
     # voy a crear mi setup propio y lo voy a llamar en init para no tener problemas por que on_show se llama dos veces
     def setup(self):
@@ -2041,22 +2069,38 @@ class GameOver(arcade.View):
     # dibujare el boton inicio , para comenzar a jugar
     # es necesario que este metodo este para poder comenzar a colorear y dibujar
     def on_draw(self):
-
         arcade.start_render()
         # dibuja todo lo heredado
         super().on_draw()  # con esto traes todas las opciones de botones , osea el dibujado
-        arcade.draw_text("FunctionWar", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 200,
-                         arcade.color.BLACK, font_size=100, anchor_x="center")
-        arcade.draw_text("PRESIONA START PARA COMENZAR ", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
-                         arcade.color.BLACK, font_size=50, anchor_x="center")
 
-    def update(self, delta_time):
+        if self.gameover:
+            arcade.draw_text("PERDISTE!!!!! ", SCREEN_WIDTH/2, SCREEN_HEIGHT *0.7,
+                             arcade.color.RED, font_size=130, anchor_x="center")
 
-        if self.comenzar_tutorial:
-            print("hola")
-            JuegoNuevo = Tutorial()  # creamos un nuevo objeto
+
+        # Calculate seconds by using a modulus (remainder)
+        seconds = int(self.time) % 60
+        # Figure out our output
+        output = f"Time: {seconds:02d}"
+        # Output the timer text.
+        arcade.draw_text(output, SCREEN_WIDTH/2, SCREEN_HEIGHT*0.5, arcade.color.BLACK, 100,anchor_x="center")
+
+
+        # arcade.draw_text("FunctionWar", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2+200,arcade.color.BLACK, font_size=100, anchor_x="center")
+        arcade.draw_text("PRESIONA EL BOTON PARA CONTINUAR ", SCREEN_WIDTH / 2, SCREEN_HEIGHT * 2 / 5,
+                         (242, 140, 56), font_size=50, anchor_x="center")
+
+    def on_update(self, delta_time):
+
+        self.time -= delta_time # hace la cuenta del tiempo
+
+        if self.comenzar_tutorial and self.time >= 0 :
+            pantalla_de_tutorial = Tutorial()  # creamos un nuevo objeto
             # y nos vamos a la pantalla de tutoriales
-            self.window.show_view(JuegoNuevo)  # nose como este metodo puede funcionar
+            self.window.show_view(pantalla_de_tutorial)  # nose como este metodo puede funcionar
+        elif self.time <= 0:
+            self.time = 0 # esto es para evitar operaciones como (-2)%60 que producen errores
+            self.gameover = True
 
 # ------------------------------------- VICTORIA ----------------------------------
 class Victoria(arcade.View):
@@ -2128,12 +2172,10 @@ class PantallaDeCarga(arcade.View):
     # el incio de mi juego
 
     # esto no es parte de arcade.View pero es necesario para mis textos por si lo quiero modificar algun dia
-    def __init__(self):
+    def __init__(self,score):
         super().__init__()
-        self.theme = None
-        self.comenzar_tutorial = False  # la condicion que si presiona el boton Start
-        self.no = True
-        self.setup()  # esto es para establecer las condiciones iniciales , lo pondria "on_show()" pero hay problemas si lo pongo alli
+        self.score = score # cantidad de monedas recolectadas
+        self.time = 0
         self.explosions_list = arcade.SpriteList()
 
         # Pre-load the animation frames. We don't do this in the __init__
@@ -2152,41 +2194,26 @@ class PantallaDeCarga(arcade.View):
         # ,Posición Y del área de recorte de la textura. , numero de mosaicos de ancho que es la imagen,
         # numero de mosacios en la imagen)
         self.explosion_texture_list = arcade.load_spritesheet(file_name, sprite_width, sprite_height, columns, count)
+        self.setup()  # esto es para establecer las condiciones iniciales , lo pondria "on_show()" pero hay problemas si lo pongo alli
 
-    # este es para establecer todos los temas a mi boton , son varias opciones  a analizar
-    def set_button_textures(self):
-        normal = ":resources:gui_themes/Fantasy/Buttons/Normal.png"
-        hover = ":resources:gui_themes/Fantasy/Buttons/Hover.png"
-        clicked = ":resources:gui_themes/Fantasy/Buttons/Clicked.png"
-        locked = ":resources:gui_themes/Fantasy/Buttons/Locked.png"
-        # fijate , self.them es un objeto para botones
-        self.theme.add_button_textures(normal, hover, clicked, locked)
 
-    # establecemos como sera el tema de mi boton
-    def setup_theme(self):
-        # se puede decir que self theme es la el objeto carcasa de mi boton . No el boton en si mismo
-        self.theme = arcade.Theme()  # revisa la documentacion , es para los botonoes
-        self.theme.set_font(24, arcade.color.WHITE)  # establecer la fuente de los textos
-        self.set_button_textures()  # metodo anterior
 
-    # para agregar los distintos botones que se usara , aca ya entra que tipo de boton sera
-    def set_buttons(self):
-        # self.button_list ya esta definido al llamar al padre y se encarga de guardar los botones
-        self.button_list.append(BeginButton(self, 60, 570, 110, 50,
-                                            theme=self.theme))  # solo un boton agregare , fijate que el ultimo argumento se dibuja el tema
-
-    # se llama cuando se llama a inicio , es como setup en arcade.setup()
-    # on_show se llama dos veces y no se por que . Eso me causa conflictos asi que aca no pongas creaciones de botones
     def on_show(self):
         # fondo de pantalla
-        arcade.set_background_color(arcade.color.WHITE)
+        arcade.set_background_color((230, 242, 223))
 
     # voy a crear mi setup propio y lo voy a llamar en init para no tener problemas por que on_show se llama dos veces
     def setup(self):
-        # la pantalla de incio
-        # para estableces los temas y los botones de los metodos antes definidos
-        self.setup_theme()
-        self.set_buttons()
+        # Make an explosiona
+        # se carga la explosion
+        explosion = Explosion(self.explosion_texture_list)
+        # Move it to the location of the coin
+        # la explosion comienza en el origen de la moneda
+        explosion.center_x = SCREEN_WIDTH/2
+        explosion.center_y = SCREEN_HEIGHT/2
+        # Add to a list of sprites that are explosions
+        # agrega a la lista
+        self.explosions_list.append(explosion)  # hay un problema aca que hace lento cuando se inicia las explosiones
 
     # dibujare el boton inicio , para comenzar a jugar
     # es necesario que este metodo este para poder comenzar a colorear y dibujar
@@ -2194,32 +2221,19 @@ class PantallaDeCarga(arcade.View):
         arcade.start_render()
         # dibuja todo lo heredado
         super().on_draw()  # con esto traes todas las opciones de botones , osea el dibujado
-        arcade.draw_text("FunctionWar", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 200,
+        arcade.draw_text("Cargando ....", SCREEN_WIDTH/2, SCREEN_HEIGHT / 2 +30,
                          arcade.color.BLACK, font_size=100, anchor_x="center")
-        arcade.draw_text("PRESIONA START PARA COMENZAR ", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
-                         arcade.color.BLACK, font_size=50, anchor_x="center")
         self.explosions_list.draw()
 
 
-    def update(self, delta_time):
+    def on_update(self, delta_time):
+        self.time += delta_time
         self.explosions_list.update()  # se actualiza las explosiones
-        if self.no:
-            # Make an explosiona
-            # se carga la explosion
-            explosion = Explosion(self.explosion_texture_list)
-            # Move it to the location of the coin
-            # la explosion comienza en el origen de la moneda
-            explosion.center_x = 100
-            explosion.center_y = 100
-            # Add to a list of sprites that are explosions
-            # agrega a la lista
-            self.explosions_list.append(explosion)  # hay un problema aca que hace lento cuando se inicia las explosiones
-            self.no = False
 
-        if self.comenzar_tutorial:
-            BatallaFinal = FinalBattle(self.explosions_list)  # creamos un nuevo objeto
+
+        if self.time >= 5.3:
+            BatallaFinal = FinalBattle(self.explosions_list,self.score)  # creamos un nuevo objeto
             # y nos vamos a la pantalla de tutoriales
-
             self.window.show_view(BatallaFinal)  # nose como este metodo puede funcionar
 
 
