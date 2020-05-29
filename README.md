@@ -1,7 +1,7 @@
 # Videogame_FunctionWar
 Mi primer videojuego que a duras aprenderé a hacerlo . Se tratará de un multijugador de lucha de armas que disparan balas con trayectorias de funciones . Este también tendrá un modo historia del cual tendrá objetivo adaptar al jugador a los controles y las mecánicas del juego. Hasta el momento hice 5 trayectorias . (lineal, polinómica , exponencial , logarítmica , sinusoidal) . El BossFinal es un Sapo(Toad) . 
 
-![](./giphy.gif)
+![](./FunctionWarAdventure/giphy.gif)
 
 ## Instalación
 
