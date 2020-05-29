@@ -38,4 +38,4 @@ Instrucciones :
 ## Fuentes
 
 - Imágenes, texturas y sonidos usados para este juego fueron sacadas de : https://arcade.academy/resources.html
-- Todo el conocimiento para hacer este proyecto de : https://learn.arcade.academy/
+- Todo el conocimiento para hacer este proyecto fue aprendido de : https://learn.arcade.academy/
