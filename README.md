@@ -39,3 +39,4 @@ Instrucciones :
 
 - Imágenes, texturas y sonidos usados para este juego fueron sacadas de : https://arcade.academy/resources.html
 - Todo el conocimiento para hacer este proyecto fue aprendido de : https://learn.arcade.academy/
+- Los ejemplos de codigo en la carpeta /ejemplo_arcade no me pertenecen . Esos ejemplos los saque de : https://arcade.academy/examples/index.html . pero lo puse en mi repositorio por que considero valiosos esos ejemplos . Por otro lado todo lo demas archivos de texto fuera de ese carpeta si lo hice yo . 
